@@ -26,16 +26,18 @@ Sistem ini dibuat untuk memenuhi Final Project Mata Kuliah Pemrograman Web Unive
 
 # Teknologi Yang Digunakan
 
-| Bagian----| Teknologi-----------------|
-|-----------|---------------------------|
-| Frontend--| HTML, CSS, Bootstrap------|
-| Backend---| PHP-----------------------|
-| Database--| MySQL/mariadb-------------|
-| Tools-----| Visual Studio Code, XAMPP |
+| Bagian | Teknologi |
+|---|---|
+| Frontend | HTML, CSS, Bootstrap |
+| Backend | PHP |
+| Database | MySQL |
+| Tools | Visual Studio Code, XAMPP |
 
+---
 
 # Struktur Folder
 
+```text
 booking_lapangan/
 │
 ├── index.php
@@ -68,7 +70,9 @@ booking_lapangan/
 │
 └── database/
     └── booking_lapangan.sql
+```
 
+---
 
 # Konsep Sistem
 
@@ -82,6 +86,8 @@ Contoh slot:
 - 12:00 - 13:30
 
 Sistem otomatis mencegah bentrok jadwal booking.
+
+---
 
 # Dynamic Page
 
@@ -111,6 +117,7 @@ ke:
 C:/xampp/htdocs/
 ```
 
+---
 
 ## 2. Jalankan XAMPP
 
@@ -118,6 +125,7 @@ Aktifkan:
 - Apache
 - MySQL
 
+---
 
 ## 3. Import Database
 
@@ -141,15 +149,18 @@ Buka browser:
 http://localhost/booking_lapangan
 ```
 
+---
+
 # Team Project
 
-| Nama---------------------| Tugas------------- |
-|--------------------------|--------------------|
-| Panji Basenda Nugroho----| Booking, Database -|
-| Nasya Kiara Putri--------| Home, Admin, UI UX |
-| Dwi Ferdianto------------| Index--------------|
-| Muhammad Azka Alasyari---| Index, UI UX-------|
+| Nama | Tugas |
+|---|---|
+| Panji Basenda Nugroho | Booking, Database |
+| Nasya Kiara Putri | Home, Admin, UI UX |
+| Dwi Ferdianto | Index |
+| Muhammad Azka Alasyari | Index, UI UX |
 
+---
 
 # Kesimpulan
 
