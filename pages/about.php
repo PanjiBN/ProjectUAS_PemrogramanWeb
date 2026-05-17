@@ -193,7 +193,7 @@
                     </td>
 
                     <td>
-                        MySQL
+                        MySQL/MariaDB
                     </td>
 
                 </tr>
