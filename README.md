@@ -64,7 +64,6 @@ booking_lapangan/
 └── assets/
     ├── css/
     │   └── style.css
-    │
     └── img/
 
 ```
