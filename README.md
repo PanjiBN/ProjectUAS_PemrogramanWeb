@@ -48,12 +48,11 @@ booking_lapangan/
 │   ├── jadwal.php
 │   ├── about.php
 │   └── contact.php
-│
-├── admin/
-│   ├── login.php
-│   ├── dashboard.php
-│   ├── slot.php
-│   └── booking.php
+|   ├── loginadmin.php
+│   ├── dashboardadmin.php
+│   ├── slotadmin.php
+│   └── bookingadmin.php
+│   
 │
 ├── process/
 │   ├── booking_process.php
@@ -62,14 +61,12 @@ booking_lapangan/
 │   ├── hapus_booking_process.php
 │   └── logout.php
 │
-├── assets/
-│   ├── css/
-│   │   └── style.css
-│   │
-│   └── img/
-│
-└── database/
-    └── booking_lapangan.sql
+└── assets/
+    ├── css/
+    │   └── style.css
+    │
+    └── img/
+
 ```
 
 ---
