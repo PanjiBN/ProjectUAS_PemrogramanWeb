@@ -1,121 +1,78 @@
-/* FOOTER */
-
-.footer-section{
-
-    background: #071126;
-
+/* Hero Section dengan background gradien gelap */
+.hero-section {
+    background: linear-gradient(135deg, #0a0f1c 0%, #0d1a2b 100%);
+    padding: 80px 0;
 }
 
-.footer-logo-icon{
-
-    width: 45px;
-    height: 45px;
-
-    background: #16c47f;
-
-    border-radius: 12px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 20px;
-    font-weight: bold;
-
-    color: white;
-
+/* Efek shadow pada card */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.footer-text{
-
-    color: #b8c1d1;
-
-    line-height: 1.8;
-
-    font-size: 15px;
-
-}
-
-.footer-title{
-
-    font-size: 22px;
-
-    font-weight: 700;
-
-    margin-bottom: 25px;
-
-}
-
-.footer-info-list{
-
-    list-style: none;
-
-    padding: 0;
-
-}
-
-.footer-info-list li{
-
-    margin-bottom: 18px;
-
-    color: #c7d0e0;
-
-    font-size: 15px;
-
-}
-
-.footer-icon{
-
-    margin-right: 10px;
-
-}
-
-.social-icon{
-
-    width: 50px;
-    height: 50px;
-
-    background: rgba(255,255,255,0.08);
-
-    border-radius: 14px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-
-    color: white;
-
-    font-weight: bold;
-
-    transition: 0.3s;
-
-}
-
-.social-icon:hover{
-
-    background: #16c47f;
-
-    color: white;
-
+.card:hover {
     transform: translateY(-5px);
-
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
 }
 
-.footer-line{
-
-    border-color: rgba(255,255,255,0.1);
-
-    margin-top: 40px;
-    margin-bottom: 20px;
-
+/* Lingkaran langkah cara booking */
+.step-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    background-color: #28a745;
+    box-shadow: 0 5px 15px rgba(40,167,69,0.3);
 }
 
-.copyright-text{
+/* Warna latar untuk preview jadwal */
+.bg-light {
+    background-color: #f8f9fc !important;
+}
 
-    color: #9aa7bd;
+/* Navbar custom */
+.navbar-dark .navbar-nav .nav-link {
+    font-weight: 500;
+    margin: 0 5px;
+}
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #28a745;
+}
 
-    font-size: 14px;
+/* Tombol sukses */
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    transition: all 0.2s;
+}
+.btn-success:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+}
 
+.btn-outline-light:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+        padding: 50px 0;
+    }
+    .hero-section .row .col-lg-6:first-child {
+        margin-bottom: 30px;
+    }
+    .display-3 {
+        font-size: 2.2rem;
+    }
+    .step-circle {
+        width: 55px;
+        height: 55px;
+        font-size: 1.4rem;
+    }
 }

@@ -1,412 +1,140 @@
 <!-- HERO SECTION -->
-
-<div class="bg-dark text-white p-5">
-
-    <div class="container text-center">
-
-        <h1 class="display-4 fw-bold">
-
-            MAU BOOKING LAPANGAN JAM BERAPA GANTENG
-
-        </h1>
-
-        <p class="lead mt-3">
-
-            Booking lapangan lebih mudah,
-            cepat, dan otomatis.
-
-        </p>
-
-        <a href="index.php?p=booking"
-        class="btn btn-success btn-lg mt-3">
-
-            Booking Sekarang
-
-        </a>
-
-    </div>
-
-</div>
-
-<!-- FITUR -->
-
-<div class="container mt-5">
-
-    <div class="row text-center">
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card shadow border-0 h-100">
-
-                <div class="card-body">
-
-                    <h3 class="text-success">
-
-                        Booking Slot
-
-                    </h3>
-
-                    <p class="mt-3">
-
-                        User dapat melakukan
-                        booking slot lapangan
-                        dengan mudah dan cepat dan mudah 
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card shadow border-0 h-100">
-
-                <div class="card-body">
-
-                    <h3 class="text-success">
-
-                        Jadwal Lapangan
-
-                    </h3>
-
-                    <p class="mt-3">
-
-                        Menampilkan slot tersedia
-                        dan slot penuh secara real-time.
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card shadow border-0 h-100">
-
-                <div class="card-body">
-
-                    <h3 class="text-success">
-
-                        Dashboard Admin
-
-                    </h3>
-
-                    <p class="mt-3">
-
-                        Admin dapat mengelola
-                        slot dan monitoring booking.
-
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- TENTANG SISTEM -->
-
-<div class="container mt-5">
-
-    <div class="card shadow border-0">
-
-        <div class="card-body p-5">
-
-            <h2 class="text-success mb-4">
-
-                Tentang Sistem
-
-            </h2>
-
-            <p>
-
-                Sistem Booking Lapangan Futsal Berbasis Web dibuat
-                untuk membantu proses booking lapangan olahraga
-                secara online agar lebih mudah, cepat, dan efisien.
-
-            </p>
-
-            <p>
-
-                Sistem menggunakan konsep
-                slot based booking system
-                dimana admin menentukan slot jadwal
-                dan user memilih slot yang tersedia.
-
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- PREVIEW JADWAL -->
-
-<div class="container mt-5 mb-5">
-
-    <h2 class="text-success mb-4 text-center">
-
-        Jadwal Slot Lapangan
-
-    </h2>
-
-    <div class="table-responsive">
-
-        <table class="table table-bordered table-striped shadow">
-
-            <tr class="table-success">
-
-                <th>
-                    Slot
-                </th>
-
-                <th>
-                    Status
-                </th>
-
-            </tr>
-
-            <tr>
-
-                <td>
-                    08:00 - 09:30
-                </td>
-
-                <td>
-
-                    <span class="badge bg-success">
-
-                        Available
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>
-                    10:00 - 11:30
-                </td>
-
-                <td>
-
-                    <span class="badge bg-danger">
-
-                        Full
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td>
-                    12:00 - 13:30
-                </td>
-
-                <td>
-
-                    <span class="badge bg-success">
-
-                        Available
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-    </div>
-
-</div>
-
-
-
-
-
-<!-- cara booking  dan tombol booking -->
-
-<div class="container mb-5">
-
-    <div class="card shadow border-0">
-
-        <div class="card-body p-5">
-
-            <h2 class="text-success mb-4">
-
-                Cara Booking
-
-            </h2>
-
-            <p>
-
-                User dapat melakukan booking slot lapangan dengan
-                mudah dan cepat melalui sistem ini. Cukup pilih slot
-                yang tersedia, isi data diri, dan konfirmasi booking.
-
-            </p>
-
-            <a href="index.php?p=booking"
-            class="btn btn-success btn-lg mt-3">
-
-                Booking Sekarang
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-
-
-<!-- FOOTER -->
-
-<footer class="bg-dark text-white pt-5 pb-4">
-
+<section class="hero-section text-white py-5">
     <div class="container">
-
-        <div class="row">
-
-            <!-- LOGO & DESKRIPSI -->
-
-            <div class="col-md-4 mb-4">
-
-                <div class="d-flex align-items-center mb-3">
-
-                    <div class="bg-success rounded d-flex 
-                    justify-content-center align-items-center me-2"
-                    style="width:35px; height:35px;">
-
-                        <span class="fw-bold text-white">
-                            ⚡
-                        </span>
-
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <p class="text-success fw-bold mb-2">★ Platform Booking Futsal #1</p>
+                <h1 class="display-3 fw-bold mb-3">Sistem Booking <br>Lapangan Futsal</h1>
+                <p class="lead mb-4">Booking lapangan lebih cepat, mudah, dan otomatis. Sistem slot cerdas mencegah bentrok jadwal secara real-time.</p>
+                <div class="d-flex gap-3 mb-4">
+                    <a href="index.php?p=booking" class="btn btn-success btn-lg px-4">Booking Sekarang</a>
+                    <a href="index.php?p=jadwal" class="btn btn-outline-light btn-lg px-4">Lihat Jadwal</a>
+                </div>
+                <div class="row text-center text-md-start mt-4">
+                    <div class="col-4">
+                        <h2 class="fw-bold text-white">2</h2>
+                        <p class="text-white-50">Lapangan</p>
                     </div>
-
-                    <h4 class="mb-0 fw-bold">
-                        FutsalBook
-                    </h4>
-
+                    <div class="col-4">
+                        <h2 class="fw-bold text-white">8</h2>
+                        <p class="text-white-50">Slot/Hari</p>
+                    </div>
+                    <div class="col-4">
+                        <h2 class="fw-bold text-white">100%</h2>
+                        <p class="text-white-50">Anti Bentrok</p>
+                    </div>
                 </div>
-
-                <p class="text-secondary">
-
-                    Sistem booking lapangan futsal modern berbasis
-                    slot otomatis. Anti bentrok, cepat, dan mudah
-                    digunakan.
-
-                </p>
-
             </div>
-
-            <!-- INFORMASI -->
-
-            <div class="col-md-4 mb-4">
-
-                <h4 class="fw-bold mb-4">
-                    Informasi
-                </h4>
-
-                <p class="text-secondary">
-
-                    📍 Jl. Olahraga No. 10, Kota Sportiva
-
-                </p>
-
-                <p class="text-secondary">
-
-                    📞 +62 812-3456-7890
-
-                </p>
-
-                <p class="text-secondary">
-
-                    ✉️ info@futsalbook.id
-
-                </p>
-
+            <div class="col-lg-6 d-none d-lg-block text-center">
+             <img src="assets/lapangan.jpg" alt="Booking futsal" class="img-fluid rounded shadow">
+                <i class="fas fa-futbol fa-10x text-success opacity-50"></i>
             </div>
-
-            <!-- SOCIAL MEDIA -->
-
-            <div class="col-md-4 mb-4">
-
-                <h4 class="fw-bold mb-4">
-                    Ikuti Kami
-                </h4>
-
-                <div class="d-flex gap-3">
-
-                    <a href="#"
-                    class="btn btn-secondary rounded">
-
-                        Instagram 
-
-                    </a>
-
-                    <a href="#"
-                    class="btn btn-secondary rounded">
-
-                        Twitter
-
-                    </a>
-
-                    <a href="#"
-                    class="btn btn-secondary rounded">
-
-                        Facebook
-
-                    </a>
-
-                </div>
-
-            </div>
-
         </div>
-
     </div>
+</section>
 
-</footer>   
+<!-- FITUR UNGGULAN -->
+<section class="container my-5 py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark">Fitur Unggulan</h2>
+        <p class="text-secondary">Kelola jadwal lapangan dengan mudah dan efisien menggunakan teknologi booking modern</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check fa-3x text-success mb-3"></i>
+                    <h4 class="fw-bold">Booking Slot</h4>
+                    <p class="text-secondary">Pilih slot waktu yang tersedia dan booking dalam hitungan detik. Konfirmasi otomatis langsung dikirim.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-eye fa-3x text-success mb-3"></i>
+                    <h4 class="fw-bold">Lihat Jadwal</h4>
+                    <p class="text-secondary">Pantau ketersediaan lapangan secara real-time. Status slot diperbarui otomatis setiap saat.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-chalkboard-user fa-3x text-success mb-3"></i>
+                    <h4 class="fw-bold">Dashboard Admin</h4>
+                    <p class="text-secondary">Kelola lapangan, slot, dan monitoring booking dari satu panel admin yang komprehensif.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PREVIEW JADWAL HARI INI -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark">Preview Jadwal Hari Ini</h2>
+            <p class="text-secondary">Cek ketersediaan slot lapangan sebelum melakukan booking</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white fw-bold py-3">Jadwal — Kamis, 14 Mei 2026</div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2 text-secondary"></i> 08:00 - 09:30</span>
+                                <span>Lapangan A</span>
+                                <span class="badge bg-success px-3 py-2">Available</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2 text-secondary"></i> 10:00 - 11:30</span>
+                                <span>Lapangan A</span>
+                                <span class="badge bg-danger px-3 py-2">Full</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2 text-secondary"></i> 12:00 - 13:30</span>
+                                <span>Lapangan B</span>
+                                <span class="badge bg-success px-3 py-2">Available</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="far fa-clock me-2 text-secondary"></i> 14:00 - 15:30</span>
+                                <span>Lapangan B</span>
+                                <span class="badge bg-danger px-3 py-2">Full</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CARA BOOKING (3 LANGKAH) -->
+<section class="container my-5 py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark">Cara Booking</h2>
+        <p class="text-secondary">Proses booking sederhana dalam 3 langkah mudah</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4 text-center">
+            <div class="step-circle bg-success text-white mx-auto mb-3">01</div>
+            <h4 class="fw-bold">Pilih Lapangan & Tanggal</h4>
+            <p class="text-secondary">Pilih lapangan futsal dan tanggal bermain yang diinginkan</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="step-circle bg-success text-white mx-auto mb-3">02</div>
+            <h4 class="fw-bold">Pilih Slot Waktu</h4>
+            <p class="text-secondary">Pilih slot waktu yang masih tersedia dari daftar yang ditampilkan</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="step-circle bg-success text-white mx-auto mb-3">03</div>
+            <h4 class="fw-bold">Konfirmasi Booking</h4>
+            <p class="text-secondary">Isi nama dan konfirmasi. Booking berhasil secara otomatis!</p>
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <a href="index.php?p=booking" class="btn btn-success btn-lg px-5">Mulai Booking <i class="fas fa-arrow-right ms-2"></i></a>
+    </div>
+</section>
