@@ -17,7 +17,6 @@ FutsalHub adalah sistem pemesanan lapangan futsal secara online dengan tampilan 
 | Bahasa | PHP 7.4+ (Native / OOP) |
 | Database | MySQL / MariaDB |
 | Frontend | Bootstrap 5.3.2 |
-| Icon | Font Awesome 6.4.0 |
 | Payment Gateway | Midtrans Snap API |
 | Email | PHPMailer (SMTP Gmail) |
 | Web Server | Apache (XAMPP) |
