@@ -222,6 +222,27 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
 
 <!-- Midtrans Snap Payment Script for Riwayat Page -->
 <script>
+/**
+ * Sinkronkan status pembayaran ke DB kita (query ke Midtrans API)
+ * sebelum redirect — memastikan status langsung 'lunas' tanpa menunggu webhook.
+ */
+function checkAndSyncPaymentStatus(orderId, redirectUrl, maxRetries = 3, attempt = 1) {
+    fetch('api/check_payment_status.php?order_id=' + encodeURIComponent(orderId))
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && (data.status === 'lunas' || data.transaction_status === 'settlement' || data.transaction_status === 'capture')) {
+                window.location.href = redirectUrl + '&payment=confirmed';
+            } else if (attempt < maxRetries) {
+                setTimeout(() => checkAndSyncPaymentStatus(orderId, redirectUrl, maxRetries, attempt + 1), 2000);
+            } else {
+                window.location.href = redirectUrl;
+            }
+        })
+        .catch(() => {
+            window.location.href = redirectUrl;
+        });
+}
+
 function payBooking(bookingId) {
     // Request snap token via AJAX
     fetch('api/create_transaction.php', {
@@ -235,14 +256,17 @@ function payBooking(bookingId) {
             throw new Error(result.message || 'Gagal mendapatkan token pembayaran.');
         }
 
+        const orderId = result.order_id;
+
         // Buka Midtrans Snap Popup
         window.snap.pay(result.snap_token, {
             onSuccess: function(res) {
-                window.location.href = 'index.php?page=riwayat&msg=paid';
+                // Sinkronkan status ke DB sebelum redirect
+                checkAndSyncPaymentStatus(orderId, 'index.php?page=riwayat&msg=paid');
             },
             onPending: function(res) {
-                // Reload halaman agar status terbaru tampil
-                window.location.href = 'index.php?page=riwayat&msg=success';
+                // Cek status ke Midtrans — mungkin sudah terkonfirmasi
+                checkAndSyncPaymentStatus(orderId, 'index.php?page=riwayat&msg=success');
             },
             onError: function(res) {
                 alert('Pembayaran gagal. Silakan coba lagi.');

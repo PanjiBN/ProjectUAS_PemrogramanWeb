@@ -2,21 +2,19 @@
 $bookingClass = new Booking();
 $error_msg = '';
 
-// Memproses aksi lunas atau pembatalan pesanan berdasarkan data dari URL
+// Hanya aksi pembatalan yang diperbolehkan admin
+// Konfirmasi (lunas) dilakukan OTOMATIS oleh webhook Midtrans
 if (isset($_GET['action']) && isset($_GET['booking_id'])) {
     $action = $_GET['action'];
     $bk_id = intval($_GET['booking_id']);
     
     try {
-        if ($action === 'confirm') {
-            $bookingClass->updateStatus($bk_id, 'lunas');
-            header("Location: index.php?page=admin_booking&msg=confirm_success");
-            exit;
-        } elseif ($action === 'cancel') {
+        if ($action === 'cancel') {
             $bookingClass->updateStatus($bk_id, 'batal');
             header("Location: index.php?page=admin_booking&msg=cancel_success");
             exit;
         }
+        // Aksi 'confirm' manual sengaja gue hapus
     } catch (Exception $e) {
         $error_msg = $e->getMessage();
     }
@@ -38,17 +36,22 @@ $bookings = $bookingClass->getAllBookings();
                     </ol>
                 </nav>
                 <h1 class="text-white display-5 fw-bold">KELOLA BOOKING</h1>
-                <p class="text-muted">Pantau transaksi dan konfirmasikan pembayaran dari pengguna.</p>
+                <p class="text-muted">Pantau transaksi pembayaran. Status <strong class="text-success">Lunas</strong> diperbarui otomatis setelah pembayaran diterima Midtrans.</p>
+            </div>
+        </div>
+
+        <!-- Info Auto-Approve -->
+        <div class="alert d-flex align-items-start gap-3 mb-4" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; color: #6ee7b7;">
+            <i class="fa-solid fa-circle-bolt fs-5 mt-1" style="color: #10b981;"></i>
+            <div>
+                <strong style="color: #10b981;">Auto-Approve Aktif</strong>
+                <p class="mb-0 small" style="color: #94a3b8;">Sistem akan otomatis mengubah status booking dari <em>Pending</em> menjadi <strong>Lunas</strong> begitu pembayaran dikonfirmasi oleh Midtrans. Admin tidak perlu menekan tombol konfirmasi secara manual.</p>
             </div>
         </div>
 
         <!-- Success/Error Alerts -->
         <?php if (isset($_GET['msg'])): ?>
-            <?php if ($_GET['msg'] === 'confirm_success'): ?>
-                <div class="alert alert-success bg-opacity-10 border border-success text-success p-3 rounded-3 mb-4 animate-fade-in" role="alert">
-                    <i class="fa-solid fa-circle-check me-2"></i> Transaksi booking berhasil dikonfirmasi ke status <strong>LUNAS</strong>!
-                </div>
-            <?php elseif ($_GET['msg'] === 'cancel_success'): ?>
+            <?php if ($_GET['msg'] === 'cancel_success'): ?>
                 <div class="alert alert-warning bg-opacity-10 border border-warning text-warning p-3 rounded-3 mb-4 animate-fade-in" role="alert">
                     <i class="fa-solid fa-circle-exclamation me-2"></i> Reservasi dibatalkan. Jam lapangan dilepas kembali ke status <strong>Tersedia</strong>.
                 </div>
@@ -73,6 +76,7 @@ $bookings = $bookingClass->getAllBookings();
                                 <th>Lapangan</th>
                                 <th>Jadwal Bermain</th>
                                 <th>Total Tagihan</th>
+                                <th>Metode Bayar</th>
                                 <th>Tanggal Transaksi</th>
                                 <th>Status</th>
                                 <th class="text-center">Tindakan</th>
@@ -83,6 +87,7 @@ $bookings = $bookingClass->getAllBookings();
                                 <?php 
                                     $bk_code = 'BK-' . str_pad($b['id_booking'], 4, '0', STR_PAD_LEFT);
                                     $time_label = date('H:i', strtotime($b['jam_mulai'])) . ' - ' . date('H:i', strtotime($b['jam_selesai']));
+                                    $payment_label = !empty($b['payment_type']) ? htmlspecialchars($b['payment_type']) : '<span class="text-muted small">-</span>';
                                 ?>
                                 <tr>
                                     <td class="fw-bold" style="color: var(--accent-color);"><?= $bk_code ?></td>
@@ -100,6 +105,7 @@ $bookings = $bookingClass->getAllBookings();
                                         </div>
                                     </td>
                                     <td class="fw-bold">Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></td>
+                                    <td class="small" style="color: #94a3b8;"><?= $payment_label ?></td>
                                     <td class="small text-muted"><?= date('d/m/Y H:i', strtotime($b['tanggal_booking'])) ?></td>
                                     <td>
                                         <?php if ($b['status'] === 'pending'): ?>
@@ -112,12 +118,16 @@ $bookings = $bookingClass->getAllBookings();
                                     </td>
                                     <td class="text-center">
                                         <?php if ($b['status'] === 'pending'): ?>
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a href="index.php?page=admin_booking&action=confirm&booking_id=<?= $b['id_booking'] ?>" class="btn btn-sm btn-success text-black fw-bold px-3" style="background: var(--accent-color); border: none;" onclick="return confirm('Konfirmasi pembayaran lunas untuk kode <?= $bk_code ?>?')">Konfirmasi</a>
-                                                <a href="index.php?page=admin_booking&action=cancel&booking_id=<?= $b['id_booking'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Batalkan booking kode <?= $bk_code ?>?')">Batal</a>
+                                            <!-- Pending: hanya bisa dibatalkan admin. Konfirmasi otomatis via Midtrans webhook. -->
+                                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                                <span class="small" style="color: #64748b;"><i class="fa-solid fa-clock me-1"></i>Menunggu bayar</span>
+                                                <a href="index.php?page=admin_booking&action=cancel&booking_id=<?= $b['id_booking'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Batalkan booking kode <?= $bk_code ?>?')">Batalkan</a>
                                             </div>
                                         <?php elseif ($b['status'] === 'lunas'): ?>
-                                            <a href="index.php?page=admin_booking&action=cancel&booking_id=<?= $b['id_booking'] ?>" class="btn btn-sm btn-outline-danger px-3" onclick="return confirm('Batalkan booking kode <?= $bk_code ?> yang sudah LUNAS?')">Batalkan</a>
+                                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                                <span class="small" style="color: #10b981;"><i class="fa-solid fa-bolt me-1"></i>Auto-approved</span>
+                                                <a href="index.php?page=admin_booking&action=cancel&booking_id=<?= $b['id_booking'] ?>" class="btn btn-sm btn-outline-danger px-3" onclick="return confirm('Batalkan booking kode <?= $bk_code ?> yang sudah LUNAS?')">Batalkan</a>
+                                            </div>
                                         <?php else: ?>
                                             <span class="text-muted small">-</span>
                                         <?php endif; ?>

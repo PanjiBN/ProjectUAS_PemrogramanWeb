@@ -29,9 +29,7 @@ function isActive($pageName) {
                 <li class="nav-item">
                     <a class="nav-link <?= isActive('about') ?>" href="index.php?page=about"><i class="fa-solid fa-circle-info me-1"></i> Tentang Kami</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= isActive('contact') ?>" href="index.php?page=contact"><i class="fa-solid fa-envelope me-1"></i> Kontak</a>
-                </li>
+                <?php /* Link Kontak dipindah ke Footer sesuai permintaan redesain UX */ ?>
                 <?php if (isset($_SESSION['user'])): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= isActive('riwayat') ?>" href="index.php?page=riwayat"><i class="fa-solid fa-clock-rotate-left me-1"></i> Riwayat Booking</a>

@@ -30,7 +30,7 @@ $bookingClass = new Booking();
 $user = $_SESSION['user'];
 
 try {
-    // CASE 1: Bayar ulang booking yang sudah ada (dari riwayat)
+    // Bayar ulang booking yang sudah ada (dari riwayat)
     if (isset($input['id_booking']) && !empty($input['id_booking'])) {
         $id_booking = intval($input['id_booking']);
         $booking = $bookingClass->getBookingById($id_booking);
@@ -88,7 +88,7 @@ try {
         exit;
     }
 
-    // 2: Booking baru dari halaman checkout
+    // Booking baru dari halaman checkout — gunakan batch method untuk efisiensi
     $id_jadwals_str = isset($input['id_jadwals']) ? trim($input['id_jadwals']) : '';
     $total_harga = isset($input['total_harga']) ? intval($input['total_harga']) : 0;
 
@@ -96,19 +96,12 @@ try {
         throw new Exception("Parameter booking tidak lengkap.");
     }
 
-    $id_jadwals = explode(',', $id_jadwals_str);
-    $num_slots = count($id_jadwals);
+    $id_jadwals    = explode(',', $id_jadwals_str);
+    $num_slots     = count($id_jadwals);
     $price_per_slot = intval($total_harga / $num_slots);
 
-    // Buat booking record di database (status: pending)
-    $booking_ids = [];
-    foreach ($id_jadwals as $id_jadwal) {
-        $bookingClass->createBooking($user['id'], intval($id_jadwal), $price_per_slot);
-        
-        // Ambil ID booking yang baru dibuat
-        $db = Database::getConnection();
-        $booking_ids[] = $db->lastInsertId();
-    }
+    // Buat semua booking dalam 1 transaksi DB biarleebih cepet ga harus loping mulu
+    $booking_ids = $bookingClass->createBookingsBatch($user['id'], $id_jadwals, $price_per_slot);
 
     // Gunakan booking ID pertama sebagai primary reference
     $primary_booking_id = $booking_ids[0];
@@ -142,10 +135,8 @@ try {
         'phone'      => ''
     ], $items);
 
-    // Simpan snap token ke semua booking yang dibuat
-    foreach ($booking_ids as $bk_id) {
-        $bookingClass->updateSnapToken($bk_id, $snap['snap_token'], $order_id);
-    }
+    //  Update snap token ke semua booking dalam 1 query (bukan loop N kali) 
+    $bookingClass->updateSnapTokenBatch($booking_ids, $snap['snap_token'], $order_id);
 
     echo json_encode([
         'success'     => true,

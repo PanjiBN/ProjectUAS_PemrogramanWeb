@@ -135,11 +135,16 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
                     </div>
                     
 
-                    <!-- Loading overlay -->
+                    <!-- Loading overlay (tampil saat menghubungi Midtrans) -->
                     <div id="checkout-loading" class="d-none">
-                        <div class="card-custom p-4 text-center mb-4">
-                            <div class="spinner-border mb-3" style="color: var(--accent-color);" role="status"></div>
-                            <p class="text-white mb-0">Memproses pembayaran, mohon tunggu...</p>
+                        <div class="card-custom p-4 text-center mb-4" style="border: 1px solid rgba(16,185,129,0.3);">
+                            <!-- Progress bar animasi -->
+                            <div style="width:100%; height:3px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:20px;">
+                                <div id="progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,#10b981,#059669); border-radius:3px; transition:width 0.5s ease;"></div>
+                            </div>
+                            <div class="spinner-border mb-3" style="color: #10b981; width:2.5rem; height:2.5rem;" role="status"></div>
+                            <p id="loading-msg" class="text-white mb-1 fw-semibold">Menyiapkan sesi pembayaran...</p>
+                            <p id="loading-sub" class="text-muted small mb-0">Menghubungi server Midtrans</p>
                         </div>
                     </div>
                 </div>
@@ -206,10 +211,83 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
 
 <!-- Midtrans Snap Payment Script -->
 <script>
-function processCheckout() {
+// ── State loading messages & progress ──────────────────────────────────────
+const LOADING_STEPS = [
+    { msg: 'Menyiapkan sesi pembayaran...',    sub: 'Memverifikasi data booking',       pct: 15,  delay: 0    },
+    { msg: 'Menghubungi server Midtrans...',   sub: 'Membuat transaksi aman',           pct: 40,  delay: 1500 },
+    { msg: 'Menghasilkan token pembayaran...', sub: 'Hampir selesai, mohon tunggu',     pct: 70,  delay: 4000 },
+    { msg: 'Membuka jendela pembayaran...',    sub: 'Token berhasil didapatkan',        pct: 95,  delay: 8000 }
+];
+
+let loadingTimers = [];
+
+function startLoadingAnimation() {
+    const bar = document.getElementById('progress-bar');
+    const msg = document.getElementById('loading-msg');
+    const sub = document.getElementById('loading-sub');
+    if (!bar || !msg) return;
+
+    loadingTimers = [];
+    LOADING_STEPS.forEach(step => {
+        const t = setTimeout(() => {
+            if (bar) bar.style.width = step.pct + '%';
+            if (msg) msg.textContent = step.msg;
+            if (sub) sub.textContent = step.sub;
+        }, step.delay);
+        loadingTimers.push(t);
+    });
+}
+
+function stopLoadingAnimation(success = true) {
+    loadingTimers.forEach(t => clearTimeout(t));
+    loadingTimers = [];
+    const bar = document.getElementById('progress-bar');
+    const msg = document.getElementById('loading-msg');
+    const sub = document.getElementById('loading-sub');
+    if (bar) bar.style.width = success ? '100%' : '0%';
+    if (msg && success) msg.textContent = 'Berhasil! Membuka jendela pembayaran...';
+    if (sub && success) sub.textContent = 'Silakan pilih metode pembayaran Anda';
+}
+
+function resetBtn() {
     const btn = document.getElementById('btn-pay-now');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Konfirmasi & Bayar Sekarang';
+    }
+}
+
+/**
+ * Sinkronkan status pembayaran ke DB (query ke Midtrans API) sebelum redirect.
+ */
+function checkAndSyncPaymentStatus(orderId, redirectUrl, maxRetries = 3, attempt = 1) {
+    const msg = document.getElementById('loading-msg');
+    const sub = document.getElementById('loading-sub');
     const loadingEl = document.getElementById('checkout-loading');
-    
+    if (loadingEl) loadingEl.classList.remove('d-none');
+    if (msg) msg.textContent = 'Mengkonfirmasi pembayaran... (' + attempt + '/' + maxRetries + ')';
+    if (sub) sub.textContent = 'Memeriksa status ke Midtrans';
+
+    fetch('api/check_payment_status.php?order_id=' + encodeURIComponent(orderId))
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && (data.status === 'lunas' || data.transaction_status === 'settlement' || data.transaction_status === 'capture')) {
+                window.location.href = redirectUrl + '&payment=confirmed';
+            } else if (attempt < maxRetries) {
+                setTimeout(() => checkAndSyncPaymentStatus(orderId, redirectUrl, maxRetries, attempt + 1), 2000);
+            } else {
+                window.location.href = redirectUrl;
+            }
+        })
+        .catch(() => {
+            window.location.href = redirectUrl;
+        });
+}
+
+function processCheckout() {
+    const btn       = document.getElementById('btn-pay-now');
+    const loadingEl = document.getElementById('checkout-loading');
+
     // Validasi telepon
     const telepon = document.getElementById('input-telepon').value.trim();
     if (!telepon) {
@@ -217,58 +295,79 @@ function processCheckout() {
         return;
     }
 
-    // Disable button & show loading
+    // Disable button & tampilkan loading dengan animasi
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
     loadingEl.classList.remove('d-none');
+    startLoadingAnimation();
 
     // Data untuk API
     const data = {
-        id_jadwals: document.getElementById('input-id-jadwals').value,
+        id_jadwals:  document.getElementById('input-id-jadwals').value,
         total_harga: parseInt(document.getElementById('input-total-harga').value)
     };
 
+    // AbortController: batalkan fetch jika lebih dari 20 detik tidak ada respons
+    const controller = new AbortController();
+    const timeoutId  = setTimeout(() => controller.abort(), 20000);
+
     // AJAX ke create_transaction endpoint
     fetch('api/create_transaction.php', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body:    JSON.stringify(data),
+        signal:  controller.signal
     })
     .then(response => response.json())
     .then(result => {
-        loadingEl.classList.add('d-none');
+        clearTimeout(timeoutId);
+        stopLoadingAnimation(result.success);
 
         if (!result.success) {
             throw new Error(result.message || 'Gagal membuat transaksi.');
         }
 
+        const orderId = result.order_id;
+
+        // Sembunyikan loading sebelum Snap popup muncul
+        setTimeout(() => loadingEl.classList.add('d-none'), 500);
+
         // Buka Midtrans Snap Popup
         window.snap.pay(result.snap_token, {
             onSuccess: function(res) {
-                // Pembayaran berhasil
-                window.location.href = 'index.php?page=riwayat&msg=paid';
+                loadingEl.classList.remove('d-none');
+                checkAndSyncPaymentStatus(orderId, 'index.php?page=riwayat&msg=paid');
             },
             onPending: function(res) {
-                // Menunggu pembayaran
-                window.location.href = 'index.php?page=riwayat&msg=success';
+                loadingEl.classList.remove('d-none');
+                checkAndSyncPaymentStatus(orderId, 'index.php?page=riwayat&msg=success');
             },
             onError: function(res) {
-                // Pembayaran gagal
+                loadingEl.classList.add('d-none');
                 alert('Pembayaran gagal. Silakan coba lagi.');
-                window.location.href = 'index.php?page=riwayat';
+                resetBtn();
             },
             onClose: function() {
-                // User menutup popup tanpa menyelesaikan pembayaran
-                // Booking tetap pending, bisa bayar nanti dari riwayat
+                loadingEl.classList.add('d-none');
+                resetBtn();
                 window.location.href = 'index.php?page=riwayat&msg=success';
             }
         });
     })
     .catch(error => {
+        clearTimeout(timeoutId);
+        stopLoadingAnimation(false);
         loadingEl.classList.add('d-none');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Konfirmasi & Bayar Sekarang';
-        alert('Error: ' + error.message);
+        resetBtn();
+
+        if (error.name === 'AbortError') {
+            alert('Koneksi ke Midtrans timeout (>20 detik). Periksa koneksi internet Anda dan coba lagi.');
+        } else {
+            alert('Error: ' + error.message);
+        }
     });
 }
 </script>
+
+
+

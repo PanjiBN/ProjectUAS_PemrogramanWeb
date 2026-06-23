@@ -41,6 +41,67 @@ class Booking {
         }
     }
 
+    public function createBookingsBatch($id_user, array $id_jadwals, $price_per_slot) {
+        $this->db->beginTransaction();
+        try {
+            $booking_ids  = [];
+            $count        = count($id_jadwals);
+            $placeholders = implode(',', array_fill(0, $count, '?'));
+
+            // Cek semua jadwal dalam 1 query 
+            $stmt = $this->db->prepare(
+                "SELECT id_jadwal, status FROM jadwal WHERE id_jadwal IN ($placeholders) FOR UPDATE"
+            );
+            $stmt->execute(array_values($id_jadwals));
+            $jadwals_status = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $jadwals_status[$row['id_jadwal']] = $row['status'];
+            }
+
+            foreach ($id_jadwals as $id_jadwal) {
+                if (!isset($jadwals_status[$id_jadwal]) || $jadwals_status[$id_jadwal] !== 'tersedia') {
+                    throw new Exception("Slot jadwal #$id_jadwal sudah tidak tersedia.");
+                }
+            }
+
+            // Insert semua booking + update jadwal (prepared statement di-reuse)
+            $stmt_insert = $this->db->prepare(
+                "INSERT INTO booking (id_user, id_jadwal, tanggal_booking, total_harga, status)
+                 VALUES (:id_user, :id_jadwal, NOW(), :total_harga, 'pending')"
+            );
+            $stmt_update = $this->db->prepare(
+                "UPDATE jadwal SET status = 'dibooking' WHERE id_jadwal = :id_jadwal"
+            );
+
+            foreach ($id_jadwals as $id_jadwal) {
+                $stmt_insert->execute([
+                    'id_user'     => $id_user,
+                    'id_jadwal'   => (int)$id_jadwal,
+                    'total_harga' => $price_per_slot
+                ]);
+                $booking_ids[] = (int)$this->db->lastInsertId();
+                $stmt_update->execute(['id_jadwal' => $id_jadwal]);
+            }
+
+            $this->db->commit();
+            return $booking_ids;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    // Update snap token ke semua booking sekaligus dalam 1 query
+     
+    public function updateSnapTokenBatch(array $booking_ids, $snap_token, $midtrans_order_id) {
+        $placeholders = implode(',', array_fill(0, count($booking_ids), '?'));
+        $params = array_merge([$snap_token, $midtrans_order_id], array_values($booking_ids));
+        $stmt = $this->db->prepare(
+            "UPDATE booking SET snap_token = ?, midtrans_order_id = ? WHERE id_booking IN ($placeholders)"
+        );
+        return $stmt->execute($params);
+    }
+
     // Fungsi untuk mendapatkan semua booking milik user tertentu
     public function getBookingsByUser($id_user) {
         $sql = "SELECT b.id_booking, b.tanggal_booking, b.total_harga, b.status,
