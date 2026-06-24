@@ -358,10 +358,16 @@ h1, h2, h3, h4, h5, h6, .display-font {
 
 /* Status Badge Styles */
 .badge-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     padding: 0.5em 1em;
     border-radius: 50px;
     font-weight: 600;
     font-size: 0.75rem;
+    white-space: nowrap;
+    min-width: 90px;
 }
 
 .badge-status.pending {
@@ -454,4 +460,32 @@ footer a:hover {
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
+}
+
+.ticket-close{
+    position:absolute;
+    top:15px;
+    right:15px;
+
+    width:38px;
+    height:38px;
+
+    border:none;
+    border-radius:50%;
+
+    background:rgba(255,255,255,.05);
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    transition:.3s;
+    z-index:9999;
+}
+
+.ticket-close:hover{
+    background:rgba(0,200,83,.15);
+    color:#00C853;
+    transform:rotate(90deg);
 }

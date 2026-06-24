@@ -96,7 +96,7 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
                             <th>Waktu Bermain</th>
                             <th>Total Tagihan</th>
                             <th>Pembayaran</th>
-                            <th>Status</th>
+                            <th style="width:120px;">Status</th>
                             <th class="text-center">Aksi / Tiket</th>
                         </tr>
                     </thead>
@@ -160,11 +160,12 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
 
                             <!-- E-Tiket Modal (tetap dipertahankan) -->    
                             <?php if ($b['status'] === 'lunas'): ?>
-                                <div class="modal fade" id="ticketModal<?= $b['id_booking'] ?>" tabindex="-1" aria-hidden="true">
+                                <div class="modal fade" id="ticketModal<?= $b['id_booking'] ?>" data-bs-backdrop="false" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content text-start position-relative" style="background-color: var(--card-dark); border: 1px solid var(--border-dark);">
                                             <button type="button" class="btn-danger position-absolute" data-bs-dismiss="modal" style="top:20px; right:20px; z-index:9999; filter: invert(1);">X</button>
-                                            <div class="modal-body text-white text-center py-4">
+                                            <div class="modal-body text-white text-center py-4" id="ticket-content-<?= $b['id_booking'] ?>">
+
                                                 <!-- Barcode representation -->
                                                 <div class="mb-4">
                                                     <i class="fa-solid fa-qrcode fs-1 mb-2 text-white"></i>
@@ -195,7 +196,7 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
                                                 <p class="small text-white mb-0"><i class="fa-solid fa-circle-exclamation me-1 text-warning"></i> Tunjukkan QR Code ini kepada pengawas lapangan FutsalHub di lokasi saat jam bermain dimulai.</p>
                                             </div>
                                             <div class="modal-footer border-secondary border-opacity-25 justify-content-center">
-                                                <button type="button" class="btn btn-sm btn-outline-custom text-white" data-bs-dismiss="modal"><i class="fa-solid fa-print me-1"></i> Cetak / Simpan PDF</button>
+                                                <button type="button" class="btn btn-sm btn-outline-custom text-white"  onclick="printTicket('<?= $bk_code ?>','<?= htmlspecialchars($b['nama_lapangan']) ?>','<?= date('d F Y', strtotime($b['tanggal'])) ?>','<?= $time_slot_label ?>','<?= htmlspecialchars($_SESSION['user']['nama']) ?>','<?= $payment_label ?>')"><i class="fa-solid fa-print me-1"></i> Cetak / Simpan PDF</button>
                                             </div>
                                         </div>
                                     </div>
@@ -278,5 +279,233 @@ function payBooking(bookingId) {
     .catch(error => {
         alert('Error: ' + error.message);
     });
+}
+function printTicket(
+    bookingCode,
+    lapangan,
+    tanggal,
+    waktu,
+    pemesan,
+    pembayaran
+){
+    const win = window.open('', '_blank');
+
+    win.document.write(`
+    <html>
+    <head>
+        <title>${bookingCode} - E-Tiket FutsalHub</title>
+
+        <style>
+
+            *{
+                box-sizing:border-box;
+                margin:0;
+                padding:0;
+                font-family:'Segoe UI',sans-serif;
+            }
+
+            body{
+                background:#f5f5f5;
+                padding:30px;
+            }
+
+            .ticket{
+                max-width:850px;
+                margin:auto;
+                background:white;
+                border-radius:20px;
+                overflow:hidden;
+                box-shadow:0 10px 30px rgba(0,0,0,.15);
+            }
+
+            .header{
+                background:linear-gradient(
+                    135deg,
+                    #0f172a,
+                    #111827
+                );
+
+                color:white;
+                text-align:center;
+                padding:35px;
+            }
+
+            .logo{
+                font-size:34px;
+                font-weight:800;
+            }
+
+            .logo span{
+                color:#00C853;
+            }
+
+            .subtitle{
+                margin-top:8px;
+                opacity:.8;
+            }
+
+            .booking{
+                text-align:center;
+                padding:30px;
+                border-bottom:1px solid #eee;
+            }
+
+            .booking-code{
+                font-size:52px;
+                font-weight:800;
+                color:#00C853;
+            }
+
+            .badge{
+                display:inline-block;
+                margin-top:10px;
+                padding:8px 18px;
+                background:#E8F5E9;
+                color:#00C853;
+                border-radius:50px;
+                font-weight:bold;
+            }
+
+            .content{
+                display:flex;
+                gap:30px;
+                padding:30px;
+            }
+
+            .qr{
+                width:220px;
+                min-width:220px;
+                border:2px dashed #00C853;
+                border-radius:16px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:80px;
+                color:#00C853;
+            }
+
+            .detail{
+                flex:1;
+            }
+
+            .row{
+                display:flex;
+                justify-content:space-between;
+                padding:14px 0;
+                border-bottom:1px dashed #ddd;
+            }
+
+            .label{
+                color:#666;
+                font-weight:600;
+            }
+
+            .value{
+                font-weight:700;
+                color:#111;
+            }
+
+            .footer{
+                background:#f8fafc;
+                padding:20px;
+                text-align:center;
+                color:#555;
+                border-top:1px solid #eee;
+            }
+
+            @media print{
+                body{
+                    background:white;
+                    padding:0;
+                }
+
+                .ticket{
+                    box-shadow:none;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="ticket">
+
+            <div class="header">
+
+                <div class="logo">
+                    FUTSAL<span>HUB</span>
+                </div>
+
+                <div class="subtitle">
+                    E-TIKET BOOKING LAPANGAN
+                </div>
+
+            </div>
+
+            <div class="booking">
+
+                <div class="booking-code">
+                    ${bookingCode}
+                </div>
+
+                <div class="badge">
+                    ✓ LUNAS
+                </div>
+
+            </div>
+
+            <div class="content">
+
+                <div class="qr">
+                    ⬚
+                </div>
+
+                <div class="detail">
+
+                    <div class="row">
+                        <span class="label">Nama Lapangan</span>
+                        <span class="value">${lapangan}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Tanggal</span>
+                        <span class="value">${tanggal}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Waktu</span>
+                        <span class="value">${waktu}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Nama Pemesan</span>
+                        <span class="value">${pemesan}</span>
+                    </div>
+
+                    <div class="row">
+                        <span class="label">Metode Bayar</span>
+                        <span class="value">${pembayaran}</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="footer">
+                Tunjukkan tiket ini kepada petugas FutsalHub saat check-in lapangan.
+            </div>
+
+        </div>
+
+    </body>
+    </html>
+    `);
+
+    win.document.close();
+
+    setTimeout(() => {
+        win.print();
+    }, 500);
 }
 </script>
