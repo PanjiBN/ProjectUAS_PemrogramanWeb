@@ -61,21 +61,6 @@ function isActive($pageName) {
                     <a href="index.php?page=register" class="btn btn-primary-custom px-3 py-2">Daftar</a>
                 <?php endif; ?>
                 
-                <!-- Quick Demo Diagnostics (Dropup/Dropdown for easy testing) -->
-                <div class="dropdown ms-2">
-                    <button class="btn btn-sm btn-dark text-muted border-0 p-2" type="button" id="demoDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Demo Controls">
-                        <i class="fa-solid fa-flask"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-2" aria-labelledby="demoDropdown" style="background-color: var(--card-dark); border: 1px solid var(--border-dark); font-size: 0.8rem;">
-                        <li class="dropdown-header text-white-50">Demo Tester Quick Login</li>
-                        <?php if (!isset($_SESSION['user'])): ?>
-                            <li><a class="dropdown-item" href="index.php?action=mock_login">Login User (Mock)</a></li>
-                            <li><a class="dropdown-item" href="index.php?action=mock_admin_login">Login Admin (Mock)</a></li>
-                        <?php else: ?>
-                            <li><a class="dropdown-item text-danger" href="index.php?action=logout">Reset (Logout)</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>

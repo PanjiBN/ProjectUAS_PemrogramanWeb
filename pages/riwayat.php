@@ -158,15 +158,12 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
                                 </td>
                             </tr>
 
-                            <!-- E-Tiket Modal (tetap dipertahankan) -->
+                            <!-- E-Tiket Modal (tetap dipertahankan) -->    
                             <?php if ($b['status'] === 'lunas'): ?>
                                 <div class="modal fade" id="ticketModal<?= $b['id_booking'] ?>" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content text-start" style="background-color: var(--card-dark); border: 1px solid var(--border-dark);">
-                                            <div class="modal-header border-secondary border-opacity-25">
-                                                <h5 class="modal-title text-white"><i class="fa-solid fa-ticket text-success me-2" style="color: var(--accent-color) !important;"></i> E-Tiket FutsalHub</h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
+                                        <div class="modal-content text-start position-relative" style="background-color: var(--card-dark); border: 1px solid var(--border-dark);">
+                                            <button type="button" class="btn-danger position-absolute" data-bs-dismiss="modal" style="top:20px; right:20px; z-index:9999; filter: invert(1);">X</button>
                                             <div class="modal-body text-white text-center py-4">
                                                 <!-- Barcode representation -->
                                                 <div class="mb-4">
@@ -176,26 +173,26 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
                                                 
                                                 <div class="border-top border-bottom border-secondary border-opacity-25 py-3 mb-4 text-start">
                                                     <div class="row g-2">
-                                                        <div class="col-5 text-muted">Nama Lapangan:</div>
+                                                        <div class="col-5 text-white fw-semibold">Nama Lapangan:</div>
                                                         <div class="col-7 fw-bold text-white"><?= htmlspecialchars($b['nama_lapangan']) ?></div>
                                                         
-                                                        <div class="col-5 text-muted">Tanggal:</div>
+                                                        <div class="col-5 text-white fw-semibold">Tanggal:</div>
                                                         <div class="col-7 text-white"><?= date('d F Y', strtotime($b['tanggal'])) ?></div>
                                                         
-                                                        <div class="col-5 text-muted">Waktu:</div>
+                                                        <div class="col-5 text-white fw-semibold">Waktu:</div>
                                                         <div class="col-7 text-white"><?= $time_slot_label ?></div>
                                                         
-                                                        <div class="col-5 text-muted">Nama Pemesan:</div>
+                                                        <div class="col-5 text-white fw-semibold">Nama Pemesan:</div>
                                                         <div class="col-7 text-white"><?= htmlspecialchars($_SESSION['user']['nama']) ?></div>
 
                                                         <?php if (!empty($b['payment_type'])): ?>
-                                                        <div class="col-5 text-muted">Metode Bayar:</div>
+                                                        <div class="col-5 text-white fw-semibold">Metode Bayar:</div>
                                                         <div class="col-7 text-white"><?= $payment_label ?></div>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
                                                 
-                                                <p class="small text-muted mb-0"><i class="fa-solid fa-circle-exclamation me-1 text-warning"></i> Tunjukkan QR Code ini kepada pengawas lapangan FutsalHub di lokasi saat jam bermain dimulai.</p>
+                                                <p class="small text-white mb-0"><i class="fa-solid fa-circle-exclamation me-1 text-warning"></i> Tunjukkan QR Code ini kepada pengawas lapangan FutsalHub di lokasi saat jam bermain dimulai.</p>
                                             </div>
                                             <div class="modal-footer border-secondary border-opacity-25 justify-content-center">
                                                 <button type="button" class="btn btn-sm btn-outline-custom text-white" data-bs-dismiss="modal"><i class="fa-solid fa-print me-1"></i> Cetak / Simpan PDF</button>
