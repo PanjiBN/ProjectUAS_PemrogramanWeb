@@ -106,6 +106,25 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
                                 $bk_code = 'BK-' . str_pad($b['id_booking'], 4, '0', STR_PAD_LEFT);
                                 $time_slot_label = date('H:i', strtotime($b['jam_mulai'])) . ' - ' . date('H:i', strtotime($b['jam_selesai']));
                                 $payment_label = !empty($b['payment_type']) ? ucfirst(str_replace('_', ' ', $b['payment_type'])) : '-';
+                                $order_id = !empty($b['midtrans_order_id']) ? $b['midtrans_order_id'] : '-';
+                                $ticket_data = [
+                                    'kodeBooking' => $bk_code,
+                                    'orderId' => $order_id,
+                                    'namaPelanggan' => $_SESSION['user']['nama'],
+                                    'namaLapangan' => $b['nama_lapangan'],
+                                    'lokasiLapangan' => $b['lokasi'],
+                                    'tanggalMain' => date('d F Y', strtotime($b['tanggal'])),
+                                    'waktuMain' => $time_slot_label
+                                ];
+                                $qr_payload = "Kode Booking / Nomor Tiket: {$ticket_data['kodeBooking']}\n"
+                                    . "Order ID Midtrans: {$ticket_data['orderId']}\n"
+                                    . "Nama Pelanggan: {$ticket_data['namaPelanggan']}\n"
+                                    . "Nama Lapangan: {$ticket_data['namaLapangan']}\n"
+                                    . "Lokasi Lapangan: {$ticket_data['lokasiLapangan']}\n"
+                                    . "Tanggal Main: {$ticket_data['tanggalMain']}\n"
+                                    . "Waktu / Jam Main: {$ticket_data['waktuMain']}";
+                                $qr_src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=' . rawurlencode($qr_payload);
+                                $ticket_json = htmlspecialchars(json_encode($ticket_data, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG), ENT_QUOTES, 'UTF-8');
                             ?>
                             <tr>
                                 <td class="fw-bold" style="color: var(--accent-color);"><?= $bk_code ?></td>
@@ -160,43 +179,54 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
 
                             <!-- E-Tiket Modal (tetap dipertahankan) -->    
                             <?php if ($b['status'] === 'lunas'): ?>
-                                <div class="modal fade" id="ticketModal<?= $b['id_booking'] ?>" data-bs-backdrop="false" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content text-start position-relative" style="background-color: var(--card-dark); border: 1px solid var(--border-dark);">
-                                            <button type="button" class="btn-danger position-absolute" data-bs-dismiss="modal" style="top:20px; right:20px; z-index:9999; filter: invert(1);">X</button>
-                                            <div class="modal-body text-white text-center py-4" id="ticket-content-<?= $b['id_booking'] ?>">
+                                <div class="modal fade" id="ticketModal<?= $b['id_booking'] ?>" data-bs-backdrop="false" tabindex="-1" aria-labelledby="ticketModalLabel<?= $b['id_booking'] ?>" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable mx-auto" style="margin-top: 7rem; margin-bottom: 2rem; max-width: 520px;">
+                                        <div class="modal-content text-start overflow-hidden" style="background-color: var(--card-dark); border: 1px solid var(--border-dark); border-radius: 8px; max-height: calc(100vh - 9rem);">
+                                            <div class="modal-header border-secondary border-opacity-25 px-4 py-3">
+                                                <div>
+                                                    <h5 class="modal-title text-white fw-bold mb-0" id="ticketModalLabel<?= $b['id_booking'] ?>">E-Tiket Booking</h5>
+                                                    <span class="small text-white-50"><?= htmlspecialchars($bk_code) ?></span>
+                                                </div>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                            </div>
+                                            <div class="modal-body text-white text-center px-4 py-4" id="ticket-content-<?= $b['id_booking'] ?>">
 
-                                                <!-- Barcode representation -->
                                                 <div class="mb-4">
-                                                    <i class="fa-solid fa-qrcode fs-1 mb-2 text-white"></i>
-                                                    <div class="text-white fw-bold tracking-widest mt-1" style="font-size: 1.1rem; color: var(--accent-color) !important;"><?= $bk_code ?></div>
+                                                    <div class="bg-white p-2 rounded-3 d-inline-block">
+                                                        <img src="<?= htmlspecialchars($qr_src) ?>" width="140" height="140" alt="QR Code <?= htmlspecialchars($bk_code) ?>">
+                                                    </div>
+                                                    <div class="text-white fw-bold tracking-widest mt-2" style="font-size: 1.1rem; color: var(--accent-color) !important;"><?= $bk_code ?></div>
                                                 </div>
                                                 
                                                 <div class="border-top border-bottom border-secondary border-opacity-25 py-3 mb-4 text-start">
                                                     <div class="row g-2">
+                                                        <div class="col-5 text-white fw-semibold">Kode Booking / Nomor Tiket:</div>
+                                                        <div class="col-7 fw-bold text-white"><?= htmlspecialchars($ticket_data['kodeBooking']) ?></div>
+                                                        
+                                                        <div class="col-5 text-white fw-semibold">Order ID Midtrans:</div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['orderId']) ?></div>
+                                                        
+                                                        <div class="col-5 text-white fw-semibold">Nama Pelanggan:</div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['namaPelanggan']) ?></div>
+                                                        
                                                         <div class="col-5 text-white fw-semibold">Nama Lapangan:</div>
-                                                        <div class="col-7 fw-bold text-white"><?= htmlspecialchars($b['nama_lapangan']) ?></div>
-                                                        
-                                                        <div class="col-5 text-white fw-semibold">Tanggal:</div>
-                                                        <div class="col-7 text-white"><?= date('d F Y', strtotime($b['tanggal'])) ?></div>
-                                                        
-                                                        <div class="col-5 text-white fw-semibold">Waktu:</div>
-                                                        <div class="col-7 text-white"><?= $time_slot_label ?></div>
-                                                        
-                                                        <div class="col-5 text-white fw-semibold">Nama Pemesan:</div>
-                                                        <div class="col-7 text-white"><?= htmlspecialchars($_SESSION['user']['nama']) ?></div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['namaLapangan']) ?></div>
 
-                                                        <?php if (!empty($b['payment_type'])): ?>
-                                                        <div class="col-5 text-white fw-semibold">Metode Bayar:</div>
-                                                        <div class="col-7 text-white"><?= $payment_label ?></div>
-                                                        <?php endif; ?>
+                                                        <div class="col-5 text-white fw-semibold">Lokasi Lapangan:</div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['lokasiLapangan']) ?></div>
+
+                                                        <div class="col-5 text-white fw-semibold">Tanggal Main:</div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['tanggalMain']) ?></div>
+                                                        
+                                                        <div class="col-5 text-white fw-semibold">Waktu / Jam Main:</div>
+                                                        <div class="col-7 text-white"><?= htmlspecialchars($ticket_data['waktuMain']) ?></div>
                                                     </div>
                                                 </div>
                                                 
                                                 <p class="small text-white mb-0"><i class="fa-solid fa-circle-exclamation me-1 text-warning"></i> Tunjukkan QR Code ini kepada pengawas lapangan FutsalHub di lokasi saat jam bermain dimulai.</p>
                                             </div>
                                             <div class="modal-footer border-secondary border-opacity-25 justify-content-center">
-                                                <button type="button" class="btn btn-sm btn-outline-custom text-white"  onclick="printTicket('<?= $bk_code ?>','<?= htmlspecialchars($b['nama_lapangan']) ?>','<?= date('d F Y', strtotime($b['tanggal'])) ?>','<?= $time_slot_label ?>','<?= htmlspecialchars($_SESSION['user']['nama']) ?>','<?= $payment_label ?>')"><i class="fa-solid fa-print me-1"></i> Cetak / Simpan PDF</button>
+                                                <button type="button" class="btn btn-sm btn-outline-custom text-white" onclick='printTicket(<?= $ticket_json ?>)'><i class="fa-solid fa-print me-1"></i> Cetak / Simpan PDF</button>
                                             </div>
                                         </div>
                                     </div>
@@ -507,5 +537,119 @@ function printTicket(
     setTimeout(() => {
         win.print();
     }, 500);
+}
+function escapeTicketHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[char]));
+}
+
+function buildTicketQrPayload(ticket) {
+    return [
+        `Kode Booking / Nomor Tiket: ${ticket.kodeBooking}`,
+        `Order ID Midtrans: ${ticket.orderId}`,
+        `Nama Pelanggan: ${ticket.namaPelanggan}`,
+        `Nama Lapangan: ${ticket.namaLapangan}`,
+        `Lokasi Lapangan: ${ticket.lokasiLapangan}`,
+        `Tanggal Main: ${ticket.tanggalMain}`,
+        `Waktu / Jam Main: ${ticket.waktuMain}`
+    ].join('\n');
+}
+
+function printTicket(ticket) {
+    const win = window.open('', '_blank');
+    const safeTicket = {
+        kodeBooking: escapeTicketHtml(ticket.kodeBooking),
+        orderId: escapeTicketHtml(ticket.orderId),
+        namaPelanggan: escapeTicketHtml(ticket.namaPelanggan),
+        namaLapangan: escapeTicketHtml(ticket.namaLapangan),
+        lokasiLapangan: escapeTicketHtml(ticket.lokasiLapangan),
+        tanggalMain: escapeTicketHtml(ticket.tanggalMain),
+        waktuMain: escapeTicketHtml(ticket.waktuMain)
+    };
+    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=' + encodeURIComponent(buildTicketQrPayload(ticket));
+
+    win.document.write(`
+    <html>
+    <head>
+        <title>${safeTicket.kodeBooking} - E-Tiket FutsalHub</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
+            body{background:#f5f5f5;padding:30px;}
+            .ticket{max-width:850px;margin:auto;background:white;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.15);}
+            .header{background:#111827;color:white;text-align:center;padding:35px;}
+            .logo{font-size:34px;font-weight:800;}
+            .logo span{color:#00C853;}
+            .subtitle{margin-top:8px;opacity:.8;}
+            .booking{text-align:center;padding:30px;border-bottom:1px solid #eee;}
+            .booking-code{font-size:52px;font-weight:800;color:#00C853;}
+            .badge-paid{display:inline-block;margin-top:10px;padding:8px 18px;background:#E8F5E9;color:#00C853;border-radius:50px;font-weight:bold;}
+            .content{display:flex;gap:30px;padding:30px;}
+            .qr{width:220px;min-width:220px;border:2px dashed #00C853;border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:center;background:#fff;}
+            .qr img{width:100%;height:auto;display:block;}
+            .detail{flex:1;}
+            .detail-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px dashed #ddd;}
+            .label{color:#666;font-weight:600;}
+            .value{font-weight:700;color:#111;text-align:right;}
+            .footer{background:#f8fafc;padding:20px;text-align:center;color:#555;border-top:1px solid #eee;}
+            @media(max-width:700px){
+                .content{flex-direction:column;align-items:center;}
+                .qr{width:200px;min-width:200px;}
+                .detail{width:100%;}
+                .detail-row{flex-direction:column;gap:4px;}
+                .value{text-align:left;}
+            }
+            @media print{
+                body{background:white;padding:0;}
+                .ticket{box-shadow:none;}
+                .no-print{display:none !important;}
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ticket">
+            <div class="header">
+                <div class="logo">FUTSAL<span>HUB</span></div>
+                <div class="subtitle">E-TIKET BOOKING LAPANGAN</div>
+            </div>
+
+            <div class="booking">
+                <div class="booking-code">${safeTicket.kodeBooking}</div>
+                <div class="badge-paid">&#10003; LUNAS</div>
+            </div>
+
+            <div class="content">
+                <div class="qr">
+                    <img src="${qrSrc}" alt="QR Code ${safeTicket.kodeBooking}">
+                </div>
+
+                <div class="detail">
+                    <div class="detail-row"><span class="label">Kode Booking / Nomor Tiket</span><span class="value">${safeTicket.kodeBooking}</span></div>
+                    <div class="detail-row"><span class="label">Order ID Midtrans</span><span class="value">${safeTicket.orderId}</span></div>
+                    <div class="detail-row"><span class="label">Nama Pelanggan</span><span class="value">${safeTicket.namaPelanggan}</span></div>
+                    <div class="detail-row"><span class="label">Nama Lapangan</span><span class="value">${safeTicket.namaLapangan}</span></div>
+                    <div class="detail-row"><span class="label">Lokasi Lapangan</span><span class="value">${safeTicket.lokasiLapangan}</span></div>
+                    <div class="detail-row"><span class="label">Tanggal Main</span><span class="value">${safeTicket.tanggalMain}</span></div>
+                    <div class="detail-row"><span class="label">Waktu / Jam Main</span><span class="value">${safeTicket.waktuMain}</span></div>
+                </div>
+            </div>
+
+            <div class="footer">Tunjukkan tiket ini kepada petugas FutsalHub saat check-in lapangan.</div>
+        </div>
+
+        <div class="text-center mt-3 no-print">
+            <button type="button" class="btn btn-success fw-bold px-4" onclick="window.print()">Cetak / Simpan PDF</button>
+        </div>
+    </body>
+    </html>
+    `);
+
+    win.document.close();
+    setTimeout(() => win.print(), 800);
 }
 </script>

@@ -9,7 +9,6 @@ require_once __DIR__ . '/../class/Booking.php';
 require_once __DIR__ . '/../class/Midtrans.php';
 require_once __DIR__ . '/../class/class.Mail.php';
 
-
 $raw_body     = file_get_contents('php://input');
 $notification = json_decode($raw_body, true);
 
@@ -22,7 +21,7 @@ if (!$notification || !isset($notification['order_id'])) {
     exit;
 }
 
-//  Ekstrak semua field dari payload Midtrans 
+// Ekstrak semua field dari payload Midtrans 
 $order_id           = $notification['order_id'];
 $transaction_id     = isset($notification['transaction_id'])     ? $notification['transaction_id']     : '';
 $status_code        = isset($notification['status_code'])        ? $notification['status_code']        : '';
@@ -32,8 +31,7 @@ $transaction_status = isset($notification['transaction_status']) ? $notification
 $fraud_status       = isset($notification['fraud_status'])       ? $notification['fraud_status']       : 'accept';
 $payment_type       = isset($notification['payment_type'])       ? $notification['payment_type']       : '';
 
-
-// validasi signature key untuk keamanan
+// Validasi signature key untuk keamanan
 if (!Midtrans::verifySignature($order_id, $status_code, $gross_amount, $signature_key)) {
     $log_entry = date('Y-m-d H:i:s') . ' | SIGNATURE INVALID for order: ' . $order_id . "\n";
     file_put_contents($log_file, $log_entry, FILE_APPEND);
@@ -42,8 +40,8 @@ if (!Midtrans::verifySignature($order_id, $status_code, $gross_amount, $signatur
     echo json_encode(array('status' => 'error', 'message' => 'Invalid signature key'));
     exit;
 }
-// Cari data booking berdasarkan order_id
 
+// Cari data booking berdasarkan order_id
 $db = Database::getConnection();
 $bookingClass = new Booking();
 
@@ -59,7 +57,8 @@ if (empty($bookings)) {
     echo json_encode(array('status' => 'error', 'message' => 'Order not found'));
     exit;
 }
-//Mapping status Midtrans ke status internal sistem
+
+// Mapping status Midtrans ke status internal sistem
 $new_status = null;
 
 if ($transaction_status == 'capture') {
@@ -77,9 +76,19 @@ if ($transaction_status == 'capture') {
 $log_entry = date('Y-m-d H:i:s') . ' | ORDER: ' . $order_id . ' | STATUS_MIDTRANS: ' . $transaction_status . ' | STATUS_INTERNAL: ' . $new_status . ' | PAYMENT: ' . $payment_type . "\n";
 file_put_contents($log_file, $log_entry, FILE_APPEND);
 
-// AUTO-APPROVE + AUTO-SEND E-TIKET
+
+// ==========================================
+// AUTO-APPROVE + AUTO-SEND E-TIKET (BATCHING)
+// ==========================================
 
 if ($new_status !== null) {
+
+    // Siapkan wadah untuk menampung semua tiket dalam 1 order
+    $booked_tickets = [];
+    $customer_email = '';
+    $customer_name  = '';
+    $send_email_flag = false;
+    
 
     foreach ($bookings as $booking) {
 
@@ -87,20 +96,18 @@ if ($new_status !== null) {
         $id_user        = $booking['id_user'];
         $current_status = $booking['status'];
 
-        // Hindari downgrade jangan ubah status 'lunas' menjadi 'pending'
+        // Hindari downgrade: jangan ubah status 'lunas' menjadi 'pending'
         if ($current_status == 'lunas' && $new_status == 'pending') {
-            $log_entry = date('Y-m-d H:i:s') . ' | SKIP DOWNGRADE BK-' . $id_booking . ': sudah lunas, tidak di-downgrade ke pending' . "\n";
+            $log_entry = date('Y-m-d H:i:s') . ' | SKIP DOWNGRADE BK-' . $id_booking . ': sudah lunas' . "\n";
             file_put_contents($log_file, $log_entry, FILE_APPEND);
             continue;
         }
 
         try {
-            //  Update status + data transaksi secara atomik 
+            // Update status & payment secara atomik per booking
             if ($new_status != $current_status) {
                 $bookingClass->updateStatus($id_booking, $new_status);
             }
-
-            // Simpan data transaksi Midtrans ke database (transaction_id & payment_type)
             if (!empty($transaction_id)) {
                 $bookingClass->updateMidtransPayment($id_booking, $transaction_id, $payment_type);
             }
@@ -108,241 +115,124 @@ if ($new_status !== null) {
             $log_entry = date('Y-m-d H:i:s') . ' | DB UPDATED BK-' . $id_booking . ': [' . $current_status . '] -> [' . $new_status . "]\n";
             file_put_contents($log_file, $log_entry, FILE_APPEND);
 
-
-            //  Kirim email hanya saat pembayaran baru lunas
+            // Kumpulkan data untuk email JIKA status baru saja lunas
             if (($transaction_status == 'settlement' || $transaction_status == 'capture') && $new_status == 'lunas' && $current_status != 'lunas') {
-
-                // Ambil detail booking lengkap (JOIN jadwal + lapangan)
+                
+                // Fetch detail booking
                 $booking_detail = $bookingClass->getBookingById($id_booking);
+                
+                // Fetch data user HANYA JIKA belum ditarik (optimasi database)
+                if (empty($customer_email)) {
+                    $stmt_user = $db->prepare("SELECT nama, email FROM users WHERE id = :id_user LIMIT 1");
+                    $stmt_user->execute(array('id_user' => $id_user));
+                    $user_data = $stmt_user->fetch();
 
-                // Ambil nama & email pelanggan dari tabel users
-                $stmt_user = $db->prepare("SELECT nama, email FROM users WHERE id = :id_user LIMIT 1");
-                $stmt_user->execute(array('id_user' => $id_user));
-                $user_data = $stmt_user->fetch();
-
-                if ($user_data && !empty($user_data['email'])) {
-
-                    //sanitasi data untuk template
-                    $to_email      = $user_data['email'];
-                    $to_name       = $user_data['nama'];
-                    $customer_name = htmlspecialchars($to_name);
-                    $bk_id         = $id_booking;
-                    $bk_order_id   = htmlspecialchars($booking_detail['midtrans_order_id']);
-                    $bk_lapangan   = htmlspecialchars($booking_detail['nama_lapangan']);
-                    $bk_lokasi     = htmlspecialchars($booking_detail['lokasi']);
-                    $bk_payment    = htmlspecialchars($payment_type);
-
-                    $nama_hari  = array('Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu');
-                    $nama_bulan = array('','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember');
-                    $ts         = strtotime($booking_detail['tanggal']);
-                    $bk_tanggal = $nama_hari[date('w', $ts)] . ', ' . date('j', $ts) . ' ' . $nama_bulan[(int)date('n', $ts)] . ' ' . date('Y', $ts);
-
-                    $bk_jam_mulai   = date('H:i', strtotime($booking_detail['jam_mulai']));
-                    $bk_jam_selesai = date('H:i', strtotime($booking_detail['jam_selesai']));
-
-                    // Format harga ke Rupiah
-                    $bk_harga = 'Rp ' . number_format((int)$booking_detail['total_harga'], 0, ',', '.');
-
-                    // Subjek email
-                    $subject = 'E-Tiket FutsalHub - Booking #' . $bk_id . ' Dikonfirmasi!';
-
-                    //  detail tiket
-                    $detail_order    = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#128203;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Order ID</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_order_id . '</span>
-                        </td>
-                    </tr>';
-
-                    $detail_lapangan = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#127967;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Lapangan</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_lapangan . '</span>
-                        </td>
-                    </tr>';
-
-                    $detail_lokasi   = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#128205;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Lokasi</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_lokasi . '</span>
-                        </td>
-                    </tr>';
-
-                    $detail_tanggal  = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#128197;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Tanggal</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_tanggal . '</span>
-                        </td>
-                    </tr>';
-
-                    $detail_jam      = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#9200;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Jam Main</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_jam_mulai . ' - ' . $bk_jam_selesai . ' WIB</span>
-                        </td>
-                    </tr>';
-
-                    $detail_payment  = '<tr>
-                        <td style="padding:8px 0; vertical-align:top; width:30px; color:#10b981; font-size:16px;">&#128179;</td>
-                        <td style="padding:8px 0; vertical-align:top;">
-                            <span style="color:#64748b; font-size:12px; display:block;">Pembayaran</span>
-                            <span style="color:#e2e8f0; font-size:14px; font-weight:600;">' . $bk_payment . '</span>
-                        </td>
-                    </tr>';
-
-                    $message = '
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin:0; padding:0; background-color:#0f172a; font-family:\'Segoe UI\',Arial,sans-serif;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#0f172a; padding:30px 0;">
-        <tr>
-            <td align="center">
-                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px; width:100%;">
-
-                    <!-- HEADER -->
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #10b981, #059669); padding:30px 40px; border-radius:16px 16px 0 0; text-align:center;">
-                            <h1 style="margin:0; color:#ffffff; font-size:28px; letter-spacing:1px;">&#9917; FutsalHub</h1>
-                            <p style="margin:8px 0 0; color:#d1fae5; font-size:14px;">E-Tiket Booking Dikonfirmasi</p>
-                        </td>
-                    </tr>
-
-                    <!-- BODY -->
-                    <tr>
-                        <td style="background-color:#1e293b; padding:35px 40px;">
-
-                            <!-- Salam Pembuka -->
-                            <p style="color:#e2e8f0; font-size:16px; margin:0 0 20px;">
-                                Halo <strong style="color:#10b981;">' . $customer_name . '</strong>,
-                            </p>
-                            <p style="color:#94a3b8; font-size:14px; margin:0 0 25px; line-height:1.6;">
-                                Pembayaran kamu telah dikonfirmasi! Berikut adalah e-tiket booking kamu.
-                                Tunjukkan e-tiket ini saat datang ke lapangan.
-                            </p>
-
-                            <!-- Ticket Card -->
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
-                                   style="background-color:#0f172a; border:1px solid #334155; border-radius:12px; overflow:hidden;">
-
-                                <!-- Ticket Header -->
-                                <tr>
-                                    <td style="background-color:#064e3b; padding:15px 25px; text-align:center;">
-                                        <span style="color:#6ee7b7; font-size:13px; letter-spacing:2px; text-transform:uppercase;">
-                                            E-Tiket Booking
-                                        </span>
-                                        <h2 style="margin:5px 0 0; color:#ffffff; font-size:22px;">#' . $bk_id . '</h2>
-                                    </td>
-                                </tr>
-
-                                <!-- Ticket Details -->
-                                <tr>
-                                    <td style="padding:25px;">
-                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                                            ' . $detail_order . '
-                                            ' . $detail_lapangan . '
-                                            ' . $detail_lokasi . '
-                                            ' . $detail_tanggal . '
-                                            ' . $detail_jam . '
-                                            ' . $detail_payment . '
-                                        </table>
-
-                                        <!-- Total Harga -->
-                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
-                                               style="margin-top:20px; border-top:1px dashed #334155; padding-top:15px;">
-                                            <tr>
-                                                <td style="color:#94a3b8; font-size:14px; padding:5px 0;">Total Pembayaran</td>
-                                                <td align="right" style="color:#10b981; font-size:22px; font-weight:bold; padding:5px 0;">
-                                                    ' . $bk_harga . '
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-
-                                <!-- Status Badge -->
-                                <tr>
-                                    <td style="padding:0 25px 20px; text-align:center;">
-                                        <span style="display:inline-block; background-color:#065f46; color:#6ee7b7; padding:8px 24px;
-                                                     border-radius:20px; font-size:13px; font-weight:600; letter-spacing:1px;">
-                                            &#10003; LUNAS &mdash; DIKONFIRMASI
-                                        </span>
-                                    </td>
-                                </tr>
-
-                            </table>
-
-                            <!-- Catatan Penting -->
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
-                                   style="margin-top:25px; background-color:#1a2332; border-radius:8px; border-left:4px solid #f59e0b;">
-                                <tr>
-                                    <td style="padding:15px 20px;">
-                                        <p style="color:#fbbf24; font-size:13px; font-weight:600; margin:0 0 5px;">&#9888; Catatan Penting</p>
-                                        <p style="color:#94a3b8; font-size:12px; margin:0; line-height:1.6;">
-                                            Harap datang 10 menit sebelum jadwal main.
-                                            Tunjukkan e-tiket ini (screenshot / email) kepada petugas lapangan.
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-
-                        </td>
-                    </tr>
-
-                    <!-- FOOTER -->
-                    <tr>
-                        <td style="background-color:#0f172a; padding:25px 40px; border-top:1px solid #1e293b;
-                                   border-radius:0 0 16px 16px; text-align:center;">
-                            <p style="color:#475569; font-size:12px; margin:0 0 5px;">
-                                Email ini dikirim otomatis oleh sistem FutsalHub.
-                            </p>
-                            <p style="color:#334155; font-size:11px; margin:0;">
-                                &copy; ' . date('Y') . ' FutsalHub. All rights reserved.
-                            </p>
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>';
-
-                    // dengan memanggil fungsi Mail::SendMail, kita mengirim email ke pelanggan
-                    $kirim = Mail::SendMail($to_email, $to_name, $subject, $message);
-
-                    if ($kirim) {
-                        $log_entry = date('Y-m-d H:i:s') . ' | EMAIL SENT -> ' . $to_email . ' (BK-' . $id_booking . ")\n";
-                    } else {
-                        $log_entry = date('Y-m-d H:i:s') . ' | EMAIL FAILED -> ' . $to_email . ' (BK-' . $id_booking . ")\n";
+                    if ($user_data && !empty($user_data['email'])) {
+                        $customer_email = $user_data['email'];
+                        $customer_name  = $user_data['nama'];
+                        $send_email_flag = true;
                     }
-                    file_put_contents($log_file, $log_entry, FILE_APPEND);
-
-                } else {
-                    $log_entry = date('Y-m-d H:i:s') . ' | EMAIL SKIP: data user tidak ditemukan (BK-' . $id_booking . ")\n";
-                    file_put_contents($log_file, $log_entry, FILE_APPEND);
                 }
 
-            } // Kirim email hanya saat pembayaran baru lunas
+                // Masukkan tiket ke dalam array batch
+                if ($send_email_flag) {
+                    $ts = strtotime($booking_detail['tanggal']);
+                    $nama_hari = array('Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu');
+                    $nama_bulan = array('','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember');
+                    $tanggal_main = $nama_hari[date('w', $ts)] . ', ' . date('j', $ts) . ' ' . $nama_bulan[(int)date('n', $ts)] . ' ' . date('Y', $ts);
+
+                    $booked_tickets[] = array(
+                        'kode'     => 'BK-' . str_pad($id_booking, 4, '0', STR_PAD_LEFT),
+                        'lapangan' => htmlspecialchars($booking_detail['nama_lapangan']),
+                        'lokasi'   => htmlspecialchars($booking_detail['lokasi']),
+                        'tanggal'  => $tanggal_main,
+                        'waktu'    => date('H:i', strtotime($booking_detail['jam_mulai'])) . ' - ' . date('H:i', strtotime($booking_detail['jam_selesai'])) . ' WIB',
+                        'harga'    => 'Rp ' . number_format((int)$booking_detail['total_harga'], 0, ',', '.')
+                    );
+                }
+            }
 
         } catch (Exception $e) {
-            $log_entry = date('Y-m-d H:i:s') . ' | ERROR (BK-' . $id_booking . '): ' . $e->getMessage() . "\n";
+            // Error handling agar eksekusi loop tidak terhenti total jika 1 row gagal
+            $log_entry = date('Y-m-d H:i:s') . ' | ERROR UPDATE BK-' . $id_booking . ': ' . $e->getMessage() . "\n";
             file_put_contents($log_file, $log_entry, FILE_APPEND);
         }
+    } // End Foreach
 
-    } 
+    // ==========================================
+    // EKSEKUSI PENGIRIMAN EMAIL DI LUAR LOOP
+    // ==========================================
+    if ($send_email_flag && !empty($booked_tickets)) {
+        
+        $subject = "E-Tiket FutsalHub - Order ID: " . htmlspecialchars($order_id) . " Dikonfirmasi!";
+        
+        // Mulai bangun template HTML untuk isi email (Desain Modern)
+        $message_html = '<div style="font-family: Arial, sans-serif; padding: 20px; color: #333; background-color:#f8fafc;">';
+        $message_html .= '<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; border-top: 5px solid #10b981; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">';
+        
+        // Header Email
+        $message_html .= '<div style="text-align: center; margin-bottom: 25px;">';
+        $message_html .= '<h1 style="color: #10b981; margin: 0; font-size: 28px;">&#9917; FutsalHub</h1>';
+        $message_html .= '<p style="color: #64748b; margin: 5px 0 0 0; font-size: 14px;">E-Tiket Booking Dikonfirmasi</p>';
+        $message_html .= '</div>';
 
-} 
+        $message_html .= '<h2 style="color: #0f172a; margin-top:0;">Halo <span style="color:#10b981;">' . htmlspecialchars($customer_name) . '</span>,</h2>';
+        $message_html .= '<p style="color: #64748b; line-height: 1.6;">Pembayaran Anda telah berhasil. Berikut adalah rangkuman tiket untuk Order ID: <strong style="color:#0f172a;">' . htmlspecialchars($order_id) . '</strong></p>';
+        
+        // Loop array tiket untuk ditambahkan ke body HTML
+        foreach ($booked_tickets as $tiket) {
+            // QR Code Generator API
+            $qr_payload = "Tiket: " . $tiket['kode'] . "\nOrder ID: " . $order_id . "\nLapangan: " . $tiket['lapangan'] . "\nTanggal: " . $tiket['tanggal'] . "\nWaktu: " . $tiket['waktu'];
+            $qr_src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=10&data=' . rawurlencode($qr_payload);
 
+            $message_html .= '
+            <div style="border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 15px; border-radius: 8px; background-color: #f1f5f9;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="70%" valign="top">
+                            <h3 style="margin-top:0; color: #065f46; font-size:18px;">&#127915; ' . $tiket['kode'] . '</h3>
+                            <p style="margin: 5px 0; font-size: 14px; color: #334155;"><strong>Lapangan:</strong> ' . $tiket['lapangan'] . ' (' . $tiket['lokasi'] . ')</p>
+                            <p style="margin: 5px 0; font-size: 14px; color: #334155;"><strong>Tanggal:</strong> ' . $tiket['tanggal'] . '</p>
+                            <p style="margin: 5px 0; font-size: 14px; color: #334155;"><strong>Waktu:</strong> ' . $tiket['waktu'] . '</p>
+                            <p style="margin: 5px 0; font-size: 14px; color: #334155;"><strong>Harga:</strong> <span style="color:#10b981; font-weight:bold;">' . $tiket['harga'] . '</span></p>
+                        </td>
+                        <td width="30%" align="right" valign="top">
+                            <img src="' . htmlspecialchars($qr_src) . '" width="100" height="100" alt="QR Code" style="display:block; border-radius:8px; border:1px solid #cbd5e1;">
+                        </td>
+                    </tr>
+                </table>
+            </div>';
+        }
+        
+        $message_html .= '<div style="margin-top: 25px; padding: 15px; background-color: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;">';
+        $message_html .= '<p style="color: #b45309; font-size: 13px; margin: 0; font-weight: bold;">&#9888; Catatan Penting:</p>';
+        $message_html .= '<p style="color: #78350f; font-size: 13px; margin: 5px 0 0 0; line-height: 1.5;">Harap datang 10 menit sebelum jadwal main. Tunjukkan e-tiket ini beserta QR Code kepada petugas lapangan.</p>';
+        $message_html .= '</div>';
+        
+        $message_html .= '<p style="color: #94a3b8; font-size: 11px; margin-top: 30px; text-align: center;">&copy; ' . date('Y') . ' FutsalHub. Email ini dikirim secara otomatis oleh sistem.</p>';
+        $message_html .= '</div></div>';
+
+        // Panggil fungsi pengiriman menggunakan metode Anda (Class Mail)
+        try {
+            $kirim = Mail::SendEticketMail($customer_email, $customer_name, $subject, $message_html);
+            
+            if ($kirim) {
+                $log_entry = date('Y-m-d H:i:s') . ' | BATCH EMAIL SENT -> ' . $customer_email . " (Order: " . $order_id . ")\n";
+            } else {
+                $error_msg = Mail::GetLastError();
+                $log_entry = date('Y-m-d H:i:s') . ' | BATCH EMAIL FAILED -> ' . $customer_email . " | Error: " . $error_msg . "\n";
+            }
+            file_put_contents($log_file, $log_entry, FILE_APPEND);
+
+        } catch (Exception $e) {
+            $log_entry = date('Y-m-d H:i:s') . ' | BATCH EMAIL FATAL ERROR -> ' . $e->getMessage() . "\n";
+            file_put_contents($log_file, $log_entry, FILE_APPEND);
+        }
+    }
+}
+
+// Berikan respons 200 OK ke Midtrans agar webhook dianggap sukses
 http_response_code(200);
 echo json_encode(array('status' => 'ok'));
+exit;
 ?>
