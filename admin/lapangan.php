@@ -107,7 +107,7 @@ $fields = $lapanganClass->getAll();
                     </ol>
                 </nav>
                 <h1 class="text-white display-5 fw-bold">KELOLA LAPANGAN</h1>
-                <p class="text-muted">Tambah, ubah data, atau hapus lapangan futsal di FutsalHub.</p>
+                <p class="text-white">Tambah, ubah data, atau hapus lapangan futsal di FutsalHub.</p>
             </div>
             <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end gap-2 mt-3 mt-md-0">
                 <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addFieldModal">
@@ -150,11 +150,11 @@ $fields = $lapanganClass->getAll();
                             </div>
                             <div class="card-body p-4 d-flex flex-column">
                                 <h4 class="text-white mb-2"><?= htmlspecialchars($item['nama_lapangan']) ?></h4>
-                                <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= htmlspecialchars($item['lokasi']) ?></p>
+                                <p class="text-white small mb-3"><i class="fa-solid fa-location-dot me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= htmlspecialchars($item['lokasi']) ?></p>
                                 
                                 <div class="p-3 bg-black bg-opacity-20 border border-secondary border-opacity-25 rounded mb-4 mt-auto">
                                     <div class="d-flex justify-content-between">
-                                        <span class="text-muted small">Harga Sewa:</span>
+                                        <span class="text-white small">Harga Sewa:</span>
                                         <span class="text-success fw-bold" style="color: var(--accent-color) !important;">Rp <?= number_format($item['harga'], 0, ',', '.') ?> / Jam</span>
                                     </div>
                                 </div>
@@ -198,7 +198,7 @@ $fields = $lapanganClass->getAll();
                                         <div class="mb-3">
                                             <label class="label-custom">Ganti File Gambar (Opsional)</label>
                                             <input type="file" name="gambar_file" class="form-control form-control-custom" accept="image/*">
-                                            <div class="form-text text-muted">Abaikan jika tidak ingin mengubah gambar lapangan.</div>
+                                            <div class="form-text text-white">Abaikan jika tidak ingin mengubah gambar lapangan.</div>
                                         </div>
                                     </div>
                                     <div class="modal-footer border-secondary border-opacity-25">

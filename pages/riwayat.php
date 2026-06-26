@@ -63,7 +63,7 @@ $bookings = $bookingClass->getBookingsByUser($id_user);
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="text-white fw-bold"><i class="fa-solid fa-clock-rotate-left text-success me-2" style="color: var(--accent-color) !important;"></i> Riwayat Booking Anda</h2>
-                <p class="text-muted">Pantau status pembayaran dan tiket aktif lapangan futsal Anda.</p>
+                <p class="text-white small">Pantau status pembayaran dan tiket aktif lapangan futsal Anda.</p>
             </div>
             <a href="index.php?page=lapangan" class="btn btn-primary-custom"><i class="fa-solid fa-plus me-1"></i> Booking Baru</a>
         </div>

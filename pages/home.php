@@ -6,7 +6,7 @@
             <div class="col-lg-8 text-start">
                 <span class="hero-badge animate-fade-in"><i class="fa-solid fa-fire-flame-simple me-2"></i> Booking Lapangan Instant & Mudah</span>
                 <h1 class="display-3 text-white fw-bold mb-3 animate-slide-up delay-1">DOMINASI LAPANGAN,<br>CETAK PRESTASIMU!</h1>
-                <p class="lead text-white-50 mb-4 col-md-10 animate-slide-up delay-2" style="font-weight: 400;">
+                <p class="lead text-white mb-4 col-md-10 animate-slide-up delay-2" style="font-weight: 400;">
                     FutsalHub menyediakan lapangan futsal kualitas standar internasional dengan kemudahan booking online secara realtime. Pilih lapanganmu sekarang dan mulai pertandingan.
                 </p>
                 <div class="d-flex flex-wrap gap-3 animate-slide-up delay-3">
@@ -42,7 +42,7 @@
                 <!-- Date Picker -->
                 <div class="col-lg-3 col-md-6">
                     <label class="label-custom"><i class="fa-regular fa-calendar me-1"></i> Tanggal Main</label>
-                    <input type="date" class="form-control form-control-custom" value="<?= date('Y-m-d') ?>">
+                    <input type="date" id="tanggalMain" class="form-control form-control-custom" value="<?= date('Y-m-d') ?>">
                 </div>
                 <!-- Submit Button -->
                 <div class="col-lg-2 col-md-6 d-grid">
@@ -77,16 +77,16 @@
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
                         <h4 class="text-white mb-2">Grand Arena Vinyl</h4>
-                        <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Selatan • Court A</p>
-                        
+                        <p class="text-white small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Selatan • Court A</p>
+
                         <div class="row g-2 mb-4 py-2 border-top border-bottom border-secondary border-opacity-25">
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Vinyl Premium</div>
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 16 x 26 Meter</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Vinyl Premium</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 16 x 26 Meter</div>
                         </div>
 
                         <div class="mt-auto d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted small">Harga / Jam</span>
+                                <span class="text-white small">Harga / Jam</span>
                                 <div class="fs-5 text-white fw-bold">Rp 150.000</div>
                             </div>
                             <a href="index.php?page=detail_lapangan&id=1" class="btn btn-primary-custom py-2 px-3">Detail & Book</a>
@@ -104,16 +104,16 @@
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
                         <h4 class="text-white mb-2">Stadion Hijau Turf</h4>
-                        <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Selatan • Court B</p>
+                        <p class="text-white small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Selatan • Court B</p>
                         
                         <div class="row g-2 mb-4 py-2 border-top border-bottom border-secondary border-opacity-25">
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Rumput Sintetis</div>
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 18 x 28 Meter</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Rumput Sintetis</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 18 x 28 Meter</div>
                         </div>
 
                         <div class="mt-auto d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted small">Harga / Jam</span>
+                                <span class="text-white small">Harga / Jam</span>
                                 <div class="fs-5 text-white fw-bold">Rp 175.000</div>
                             </div>
                             <a href="index.php?page=detail_lapangan&id=2" class="btn btn-primary-custom py-2 px-3">Detail & Book</a>
@@ -131,16 +131,16 @@
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
                         <h4 class="text-white mb-2">Elite Wood Parquet</h4>
-                        <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Barat • Court C</p>
+                        <p class="text-white small mb-3"><i class="fa-solid fa-location-dot me-1"></i> Jakarta Barat • Court C</p>
                         
                         <div class="row g-2 mb-4 py-2 border-top border-bottom border-secondary border-opacity-25">
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Parquet Kayu</div>
-                            <div class="col-6 text-muted small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 15 x 25 Meter</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> Parquet Kayu</div>
+                            <div class="col-6 text-white small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> 15 x 25 Meter</div>
                         </div>
 
                         <div class="mt-auto d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted small">Harga / Jam</span>
+                                <span class="text-white small">Harga / Jam</span>
                                 <div class="fs-5 text-white fw-bold">Rp 200.000</div>
                             </div>
                             <a href="index.php?page=detail_lapangan&id=3" class="btn btn-primary-custom py-2 px-3">Detail & Book</a>
@@ -158,7 +158,7 @@
         <div class="text-center mb-5 max-w-600 mx-auto">
             <span class="text-success fw-bold text-uppercase" style="color: var(--accent-color) !important; font-size: 0.85rem;">Fasilitas & Layanan</span>
             <h2 class="text-white display-5 fw-bold mt-1">MENGAPA MEMILIH FUTSALHUB?</h2>
-            <p class="text-muted mt-2">Kami menawarkan keunggulan eksklusif untuk memastikan kenyamanan bermain Anda.</p>
+            <p class="text-white mt-2">Kami menawarkan keunggulan eksklusif untuk memastikan kenyamanan bermain Anda.</p>
         </div>
 
         <div class="row g-4">
@@ -169,7 +169,7 @@
                         <i class="fa-solid fa-bolt-lightning"></i>
                     </div>
                     <h4 class="text-white mb-2">Booking Instan Real-Time</h4>
-                    <p class="text-muted mb-0">Lihat ketersediaan jam secara langsung dan konfirmasikan pemesanan Anda tanpa perlu menunggu persetujuan manual.</p>
+                    <p class="text-white mb-0">Lihat ketersediaan jam secara langsung dan konfirmasikan pemesanan Anda tanpa perlu menunggu persetujuan manual.</p>
                 </div>
             </div>
 
@@ -180,7 +180,7 @@
                         <i class="fa-solid fa-award"></i>
                     </div>
                     <h4 class="text-white mb-2">Lapangan Standar Pro</h4>
-                    <p class="text-muted mb-0">Pilihan jenis lantai Vinyl impor, Rumput Sintetis lembut, dan Parquet kayu standar internasional yang terawat prima.</p>
+                    <p class="text-white mb-0">Pilihan jenis lantai Vinyl impor, Rumput Sintetis lembut, dan Parquet kayu standar internasional yang terawat prima.</p>
                 </div>
             </div>
 
@@ -191,7 +191,7 @@
                         <i class="fa-solid fa-wallet"></i>
                     </div>
                     <h4 class="text-white mb-2">Harga Terbaik & Transparan</h4>
-                    <p class="text-muted mb-0">Tanpa biaya tambahan tersembunyi. Sistem harga transparan dengan kemudahan pembayaran multi-platform e-wallet & bank transfer.</p>
+                    <p class="text-white mb-0">Tanpa biaya tambahan tersembunyi. Sistem harga transparan dengan kemudahan pembayaran multi-platform e-wallet & bank transfer.</p>
                 </div>
             </div>
         </div>
@@ -217,14 +217,14 @@
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                     </div>
-                    <p class="text-muted mb-4">"Aplikasinya sangat memudahkan untuk booking jam main selepas kerja. Lapangan vinyl-nya masih empuk, fasilitas shower & ruang gantinya sangat bersih."</p>
+                    <p class="text-white mb-4">"Aplikasinya sangat memudahkan untuk booking jam main selepas kerja. Lapangan vinyl-nya masih empuk, fasilitas shower & ruang gantinya sangat bersih."</p>
                     <div class="d-flex align-items-center gap-3">
                         <div style="width: 45px; height: 45px; border-radius: 50%; background: var(--accent-color); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000;">
                             AN
                         </div>
                         <div>
                             <h6 class="text-white mb-0">Aris Nugraha</h6>
-                            <small class="text-muted">Kapten FC Karyawan</small>
+                            <small class="text-white">Kapten FC Karyawan</small>
                         </div>
                     </div>
                 </div>
@@ -240,14 +240,14 @@
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star-half-stroke"></i>
                     </div>
-                    <p class="text-muted mb-4">"Sangat suka dengan jadwal real-time. Nggak perlu lagi capek WA admin lapangan bolak-balik nanyain jam kosong. Begitu bayar langsung dapat tiket booking."</p>
+                    <p class="text-white mb-4">"Sangat suka dengan jadwal real-time. Nggak perlu lagi capek WA admin lapangan bolak-balik nanyain jam kosong. Begitu bayar langsung dapat tiket booking."</p>
                     <div class="d-flex align-items-center gap-3">
                         <div style="width: 45px; height: 45px; border-radius: 50%; background: #00E676; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000;">
                             RF
                         </div>
                         <div>
                             <h6 class="text-white mb-0">Reza Fahlevi</h6>
-                            <small class="text-muted">Pemain Futsal Amatir</small>
+                            <small class="text-white">Pemain Futsal Amatir</small>
                         </div>
                     </div>
                 </div>
@@ -263,14 +263,14 @@
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                     </div>
-                    <p class="text-muted mb-4">"Lapangan elite wood parquet di Jakarta Barat keren banget! Lantainya mulus tidak licin. Booking lewat FutsalHub sangat lancar tanpa kendala."</p>
+                    <p class="text-white mb-4">"Lapangan elite wood parquet di Jakarta Barat keren banget! Lantainya mulus tidak licin. Booking lewat FutsalHub sangat lancar tanpa kendala."</p>
                     <div class="d-flex align-items-center gap-3">
                         <div style="width: 45px; height: 45px; border-radius: 50%; background: #00B0FF; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000;">
                             HS
                         </div>
                         <div>
                             <h6 class="text-white mb-0">Hendra Saputra</h6>
-                            <small class="text-muted">Ketua Liga Mahasiswa</small>
+                            <small class="text-white">Ketua Liga Mahasiswa</small>
                         </div>
                     </div>
                 </div>
@@ -282,8 +282,8 @@
 <!-- CTA Section -->
 <section class="py-5" style="background: linear-gradient(135deg, rgba(0, 200, 83, 0.9) 0%, rgba(0, 150, 60, 0.9) 100%), url('assets/images/hero_bg.png'); background-blend-mode: overlay; background-size: cover; background-position: center;">
     <div class="container py-5 text-center">
-        <h2 class="display-4 fw-bold text-black mb-3">Tunggu Apa Lagi? Mainkan Lagamu!</h2>
-        <p class="lead text-black-50 mb-4 mx-auto" style="max-width: 600px; font-weight: 500;">
+        <h2 class="display-4 fw-bold text-white mb-3">Tunggu Apa Lagi? Mainkan Lagamu!</h2>
+        <p class="lead text-white mb-4 mx-auto" style="max-width: 600px; font-weight: 500;">
             Gabung dengan ribuan tim futsal lainnya yang sudah beralih menggunakan kemudahan booking digital di FutsalHub.
         </p>
         <a href="index.php?page=lapangan" class="btn btn-dark btn-lg px-5 py-3 rounded-pill fw-bold text-white border-0 shadow-lg" style="transition: all 0.3s ease; background: #12161c;">
@@ -291,3 +291,10 @@
         </a>
     </div>
 </section>
+<script>
+document.getElementById("tanggalMain").addEventListener("click", function () {
+    if (this.showPicker) {
+        this.showPicker();
+    }
+});
+</script>   

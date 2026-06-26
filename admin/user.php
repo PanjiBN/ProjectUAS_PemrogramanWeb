@@ -34,7 +34,7 @@ $users = $userClass->getAllUsers();
                     </ol>
                 </nav>
                 <h1 class="text-white display-5 fw-bold">KELOLA PENGGUNA</h1>
-                <p class="text-muted">Pantau daftar pengguna terdaftar dan kelola hak akses akun.</p>
+                <p class="text-white">Pantau daftar pengguna terdaftar dan kelola hak akses akun.</p>
             </div>
         </div>
 

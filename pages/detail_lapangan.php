@@ -59,7 +59,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false || stripos($field['nama_l
                         </div>
                         
                         <h2 class="text-white fw-bold mb-2"><?= htmlspecialchars($field['nama_lapangan']) ?></h2>
-                        <p class="text-muted"><i class="fa-solid fa-location-dot me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= htmlspecialchars($field['lokasi']) ?></p>
+                        <p class="text-white small"><i class="fa-solid fa-location-dot me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= htmlspecialchars($field['lokasi']) ?></p>
                         
                         <hr class="border-secondary opacity-25 my-4">
                         
@@ -87,7 +87,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false || stripos($field['nama_l
             <div class="col-lg-5">
                 <div class="card-custom p-4 sticky-top" style="top: 100px; z-index: 5;">
                     <h4 class="text-white mb-3"><i class="fa-solid fa-calendar-check text-success me-2" style="color: var(--accent-color) !important;"></i> Pilih Jadwal Main</h4>
-                    <p class="text-muted small mb-4">Silakan tentukan tanggal dan pilih satu atau lebih jam bermain yang masih tersedia di bawah ini.</p>
+                    <p class="text-white small mb-4">Silakan tentukan tanggal dan pilih satu atau lebih jam bermain yang masih tersedia di bawah ini.</p>
                     
                     <!-- Date Input -->
                     <div class="mb-4">
@@ -99,7 +99,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false || stripos($field['nama_l
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <label class="label-custom mb-0"><i class="fa-regular fa-clock me-1"></i> Slot Waktu Tersedia</label>
-                            <span class="text-muted small">Waktu Operasional: 08:00 - 22:00</span>
+                            <span class="text-white small">Waktu Operasional: 08:00 - 22:00</span>
                         </div>
                         
                         <div class="schedule-grid">
@@ -120,20 +120,20 @@ if (stripos($field['nama_lapangan'], 'turf') !== false || stripos($field['nama_l
                     <!-- Order Summary Box -->
                     <div class="card p-3 border-secondary border-opacity-25 mb-4" style="background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md);">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Lapangan:</span>
+                            <span class="text-white small">Lapangan:</span>
                             <span class="text-white fw-bold"><?= htmlspecialchars($field['nama_lapangan']) ?></span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Harga per jam:</span>
+                            <span class="text-white small">Harga per jam:</span>
                             <span class="text-white">Rp <?= number_format($field['harga'], 0, ',', '.') ?></span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Total Jam dipilih:</span>
+                            <span class="text-white small">Total Jam dipilih:</span>
                             <span class="text-white fw-bold" id="total-hours">0 Jam</span>
                         </div>
                         <hr class="border-secondary opacity-25 my-2">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted fw-bold">Total Pembayaran:</span>
+                            <span class="text-white fw-bold">Total Pembayaran:</span>
                             <span class="fs-4 text-success fw-bold" id="total-payment" style="color: var(--accent-color) !important;">Rp 0</span>
                         </div>
                     </div>
@@ -215,6 +215,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Send selected schedule IDs list to booking checkout page
             window.location.href = `index.php?page=booking&id=${fieldId}&date=${date}&slots=${slotsStr}`;
         <?php endif; ?>
+    });
+    const bookingDate = document.getElementById("booking-date");
+
+    bookingDate.addEventListener("click", function () {
+        if (this.showPicker) {
+            this.showPicker();
+        }
     });
 });
 </script>

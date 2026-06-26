@@ -64,7 +64,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
             <div class="col-md-8">
                 <span class="text-success fw-bold text-uppercase" style="color: var(--accent-color) !important; font-size: 0.85rem;">Admin Control Center</span>
                 <h1 class="text-white display-5 fw-bold mt-1">DASHBOARD UTAMA</h1>
-                <p class="text-muted">Kelola data pemesanan, ketersediaan lapangan futsal, dan anggota dengan cepat.</p>
+                <p class="text-white">Kelola data pemesanan, ketersediaan lapangan futsal, dan anggota dengan cepat.</p>
             </div>
             <!-- Sub Navigation Menu for Admin -->
             <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end gap-2 mt-3 mt-md-0">
@@ -94,7 +94,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
                 <div class="card-custom p-4 d-flex align-items-center gap-4">
                     <div class="benefit-icon mb-0" style="width: 55px; height: 55px; font-size: 1.3rem;"><i class="fa-solid fa-users"></i></div>
                     <div>
-                        <span class="text-muted small d-block">TOTAL PENGGUNA</span>
+                        <span class="text-white small d-block">TOTAL PENGGUNA</span>
                         <h3 class="text-white fw-bold mb-0 mt-1"><?= $total_users ?></h3>
                     </div>
                 </div>
@@ -105,7 +105,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
                 <div class="card-custom p-4 d-flex align-items-center gap-4">
                     <div class="benefit-icon mb-0" style="width: 55px; height: 55px; font-size: 1.3rem;"><i class="fa-solid fa-futbol"></i></div>
                     <div>
-                        <span class="text-muted small d-block">TOTAL LAPANGAN</span>
+                        <span class="text-white small d-block">TOTAL LAPANGAN</span>
                         <h3 class="text-white fw-bold mb-0 mt-1"><?= $total_fields ?></h3>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
                 <div class="card-custom p-4 d-flex align-items-center gap-4">
                     <div class="benefit-icon mb-0" style="width: 55px; height: 55px; font-size: 1.3rem;"><i class="fa-solid fa-calendar-check"></i></div>
                     <div>
-                        <span class="text-muted small d-block">TOTAL BOOKING</span>
+                        <span class="text-white small d-block">TOTAL BOOKING</span>
                         <h3 class="text-white fw-bold mb-0 mt-1"><?= $total_bookings ?></h3>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
                 <div class="card-custom p-4 d-flex align-items-center gap-4">
                     <div class="benefit-icon mb-0" style="width: 55px; height: 55px; font-size: 1.3rem;"><i class="fa-solid fa-wallet"></i></div>
                     <div>
-                        <span class="text-muted small d-block">PENDAPATAN</span>
+                        <span class="text-white small d-block">PENDAPATAN</span>
                         <h3 class="text-success fw-bold mb-0 mt-1" style="color: var(--accent-color) !important;">Rp <?= number_format($total_revenue, 0, ',', '.') ?></h3>
                     </div>
                 </div>
@@ -168,7 +168,7 @@ if (isset($_GET['action']) && isset($_GET['booking_id'])) {
                                             <td><?= htmlspecialchars($b['nama_user']) ?></td>
                                             <td><?= htmlspecialchars($b['nama_lapangan']) ?></td>
                                             <td>
-                                                <span class="small text-white-50"><?= date('d M Y', strtotime($b['tanggal'])) ?> • <?= $time_label ?></span>
+                                                <span class="small text-white"><?= date('d M Y', strtotime($b['tanggal'])) ?> • <?= $time_label ?></span>
                                             </td>
                                             <td class="fw-bold">Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></td>
                                             <td>

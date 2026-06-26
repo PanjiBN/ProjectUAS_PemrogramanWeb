@@ -36,7 +36,7 @@ $bookings = $bookingClass->getAllBookings();
                     </ol>
                 </nav>
                 <h1 class="text-white display-5 fw-bold">KELOLA BOOKING</h1>
-                <p class="text-muted">Pantau transaksi pembayaran. Status <strong class="text-success">Lunas</strong> diperbarui otomatis setelah pembayaran diterima Midtrans.</p>
+                <p class="text-white">Pantau transaksi pembayaran. Status <strong class="text-success">Lunas</strong> diperbarui otomatis setelah pembayaran diterima Midtrans.</p>
             </div>
         </div>
 
@@ -94,7 +94,7 @@ $bookings = $bookingClass->getAllBookings();
                                     <td>
                                         <div>
                                             <span class="text-white fw-bold d-block"><?= htmlspecialchars($b['nama_user']) ?></span>
-                                            <span class="text-muted small"><?= htmlspecialchars($b['email_user']) ?></span>
+                                            <span class="text-white small"><?= htmlspecialchars($b['email_user']) ?></span>
                                         </div>
                                     </td>
                                     <td><?= htmlspecialchars($b['nama_lapangan']) ?></td>
@@ -106,7 +106,7 @@ $bookings = $bookingClass->getAllBookings();
                                     </td>
                                     <td class="fw-bold">Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></td>
                                     <td class="small" style="color: #94a3b8;"><?= $payment_label ?></td>
-                                    <td class="small text-muted"><?= date('d/m/Y H:i', strtotime($b['tanggal_booking'])) ?></td>
+                                    <td class="small text-white"><?= date('d/m/Y H:i', strtotime($b['tanggal_booking'])) ?></td>
                                     <td>
                                         <?php if ($b['status'] === 'pending'): ?>
                                             <span class="badge-status pending"><i class="fa-solid fa-circle-notch fa-spin me-1"></i> Pending</span>

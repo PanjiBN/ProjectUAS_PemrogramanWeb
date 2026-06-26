@@ -71,7 +71,7 @@ $filtered_lapangans = array_filter($lapangans, function($item) use ($search_quer
                     </ol>
                 </nav>
                 <h1 class="text-white display-5 fw-bold">KATALOG LAPANGAN (DB-ACTIVE)</h1>
-                <p class="text-muted">Temukan lapangan futsal impianmu yang terhubung langsung ke database FutsalHub secara real-time.</p>
+                <p class="text-white small">Temukan lapangan futsal impianmu yang terhubung langsung ke database FutsalHub secara real-time.</p>
             </div>
         </div>
 
@@ -81,7 +81,7 @@ $filtered_lapangans = array_filter($lapangans, function($item) use ($search_quer
                 <div class="card-custom p-4 text-start">
                     <h5 class="text-white mb-4"><i class="fa-solid fa-filter text-success me-2" style="color: var(--accent-color) !important;"></i> Filter Lapangan</h5>
                     
-                    <form action="index.php" method="GET">
+                    <form id="filterForm" action="index.php" method="GET">
                         <input type="hidden" name="page" value="lapangan">
                         
                         <!-- Search Query Input -->
@@ -122,7 +122,7 @@ $filtered_lapangans = array_filter($lapangans, function($item) use ($search_quer
             <!-- Grid Listing -->
             <div class="col-lg-9 text-start">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                    <p class="mb-0 text-muted">Menampilkan <span class="text-white fw-bold"><?= count($filtered_lapangans) ?></span> Lapangan dari Database</p>
+                    <p class="mb-0 text-white small">Menampilkan <span class="text-white fw-bold"><?= count($filtered_lapangans) ?></span> Lapangan dari Database</p>
                     <?php if ($search_query !== '' || $tipe_filter !== ''): ?>
                         <a href="index.php?page=lapangan" class="btn btn-sm btn-outline-custom text-decoration-none py-1 px-3" style="font-size: 0.8rem;">Reset Filter <i class="fa-solid fa-times ms-1"></i></a>
                     <?php endif; ?>
@@ -141,20 +141,20 @@ $filtered_lapangans = array_filter($lapangans, function($item) use ($search_quer
                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                             <h4 class="text-white mb-0"><?= htmlspecialchars($item['nama']) ?></h4>
                                         </div>
-                                        <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i> <?= htmlspecialchars($item['lokasi']) ?></p>
+                                        <p class="text-white small mb-3"><i class="fa-solid fa-location-dot me-1"></i> <?= htmlspecialchars($item['lokasi']) ?></p>
                                         
                                         <p class="text-white-50 small mb-4 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">
                                             <?= htmlspecialchars($item['deskripsi']) ?>
                                         </p>
                                         
                                         <div class="row g-2 mb-4 py-2 border-top border-bottom border-secondary border-opacity-25">
-                                            <div class="col-6 text-muted small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= $item['tipe_label'] ?></div>
-                                            <div class="col-6 text-muted small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= $item['dimensi'] ?></div>
+                                            <div class="col-6 text-white small"><i class="fa-solid fa-layer-group me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= $item['tipe_label'] ?></div>
+                                            <div class="col-6 text-white small"><i class="fa-solid fa-arrows-up-down-left-right me-1 text-success" style="color: var(--accent-color) !important;"></i> <?= $item['dimensi'] ?></div>
                                         </div>
                                         
                                         <div class="mt-auto d-flex align-items-center justify-content-between">
                                             <div>
-                                                <span class="text-muted small">Harga / Jam</span>
+                                                <span class="text-white small">Harga / Jam</span>
                                                 <div class="fs-5 text-white fw-bold">Rp <?= number_format($item['harga'], 0, ',', '.') ?></div>
                                             </div>
                                             <a href="index.php?page=detail_lapangan&id=<?= $item['id'] ?>" class="btn btn-primary-custom py-2 px-3">Detail & Book</a>
@@ -176,3 +176,20 @@ $filtered_lapangans = array_filter($lapangans, function($item) use ($search_quer
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("filterForm");
+    const searchInput = document.querySelector('input[name="search"]');
+    const radioButtons = document.querySelectorAll('input[name="tipe"]');
+
+    radioButtons.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            if (searchInput.value.trim() === "") {
+                form.submit();
+            }
+        });
+    });
+
+});
+</script>

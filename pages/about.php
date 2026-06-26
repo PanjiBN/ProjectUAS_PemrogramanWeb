@@ -22,15 +22,15 @@
                 <div class="row g-3">
                     <div class="col-6 col-md-4">
                         <h2 class="fw-bold mb-0 text-success" style="color: var(--accent-color) !important;">15k+</h2>
-                        <span class="text-muted small">Pemain Aktif</span>
+                        <span class="text-white small">Pemain Aktif</span>
                     </div>
                     <div class="col-6 col-md-4">
                         <h2 class="fw-bold mb-0 text-success" style="color: var(--accent-color) !important;">100k+</h2>
-                        <span class="text-muted small">Jam Booking</span>
+                        <span class="text-white small">Jam Booking</span>
                     </div>
                     <div class="col-6 col-md-4">
                         <h2 class="fw-bold mb-0 text-success" style="color: var(--accent-color) !important;">4.8</h2>
-                        <span class="text-muted small">Rating Kepuasan</span>
+                        <span class="text-white small">Rating Kepuasan</span>
                     </div>
                 </div>
             </div>
@@ -49,14 +49,14 @@
                 <div class="card-custom p-4 h-100">
                     <div class="benefit-icon"><i class="fa-solid fa-eye"></i></div>
                     <h4 class="text-white mb-3">Visi Kami</h4>
-                    <p class="text-muted mb-0">Menjadi platform ekosistem olahraga nomor satu di Indonesia yang menghubungkan pegiat olahraga dengan fasilitas arena terbaik secara seamless, efisien, dan inklusif.</p>
+                    <p class="text-white mb-0">Menjadi platform ekosistem olahraga nomor satu di Indonesia yang menghubungkan pegiat olahraga dengan fasilitas arena terbaik secara seamless, efisien, dan inklusif.</p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card-custom p-4 h-100">
                     <div class="benefit-icon"><i class="fa-solid fa-bullseye"></i></div>
                     <h4 class="text-white mb-3">Misi Kami</h4>
-                    <p class="text-muted mb-0">Meningkatkan gaya hidup sehat masyarakat dengan menghadirkan kemudahan reservasi arena, memelihara standar kualitas lapangan olahraga tertinggi, serta melayani pelanggan dengan integritas prima.</p>
+                    <p class="text-white mb-0">Meningkatkan gaya hidup sehat masyarakat dengan menghadirkan kemudahan reservasi arena, memelihara standar kualitas lapangan olahraga tertinggi, serta melayani pelanggan dengan integritas prima.</p>
                 </div>
             </div>
         </div>

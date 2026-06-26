@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row mb-5">
             <div class="col-lg-6">
                 <h1 class="text-white display-5 fw-bold mb-3">HUBUNGI FUTSALHUB</h1>
-                <p class="text-muted lead col-md-10">Mempunyai pertanyaan seputar booking, kemitraan lapangan, atau masukan? Layanan bantuan kami siap membantu Anda 24/7.</p>
+                <p class="text-white lead col-md-10">Mempunyai pertanyaan seputar booking, kemitraan lapangan, atau masukan? Layanan bantuan kami siap membantu Anda 24/7.</p>
             </div>
         </div>
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="benefit-icon mb-0" style="width: 50px; height: 50px; min-width: 50px;"><i class="fa-solid fa-location-dot"></i></div>
                         <div>
                             <h6 class="text-white fw-bold mb-1">Alamat Kantor</h6>
-                            <p class="text-muted small mb-0">Jl. Stadium Futsal No. 88, Jakarta Selatan, Indonesia</p>
+                            <p class="text-white small mb-0">Jl. Stadium Futsal No. 88, Jakarta Selatan, Indonesia</p>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="benefit-icon mb-0" style="width: 50px; height: 50px; min-width: 50px;"><i class="fa-solid fa-phone"></i></div>
                         <div>
                             <h6 class="text-white fw-bold mb-1">Telepon & WhatsApp</h6>
-                            <p class="text-muted small mb-0">+62 812-3456-7890</p>
+                            <p class="text-white small mb-0">+62 812-3456-7890</p>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="benefit-icon mb-0" style="width: 50px; height: 50px; min-width: 50px;"><i class="fa-solid fa-envelope"></i></div>
                         <div>
                             <h6 class="text-white fw-bold mb-1">Email Support</h6>
-                            <p class="text-muted small mb-0">support@futsalhub.com</p>
+                            <p class="text-white small mb-0">support@futsalhub.com</p>
                         </div>
                     </div>
                 </div>

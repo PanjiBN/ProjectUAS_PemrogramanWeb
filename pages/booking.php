@@ -59,7 +59,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
         <div class="row mb-4">
             <div class="col-12">
                 <h2 class="text-white fw-bold"><i class="fa-solid fa-file-invoice-dollar text-success me-2" style="color: var(--accent-color) !important;"></i> Konfirmasi Pemesanan</h2>
-                <p class="text-muted">Periksa kembali detail pemesanan Anda sebelum melakukan konfirmasi pembayaran.</p>
+                <p class="text-white">Periksa kembali detail pemesanan Anda sebelum melakukan konfirmasi pembayaran.</p>
             </div>
         </div>
 
@@ -110,7 +110,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
                             </div>
                             <div>
                                 <h6 class="text-white mb-1">Midtrans Secure Payment</h6>
-                                <p class="text-muted small mb-0">Pilih metode pembayaran (Bank Transfer, E-Wallet, QRIS, dll) pada popup pembayaran yang akan muncul setelah klik tombol di bawah.</p>
+                                <p class="text-white small mb-0">Pilih metode pembayaran (Bank Transfer, E-Wallet, QRIS, dll) pada popup pembayaran yang akan muncul setelah klik tombol di bawah.</p>
                             </div>
                         </div>
 
@@ -144,7 +144,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
                             </div>
                             <div class="spinner-border mb-3" style="color: #10b981; width:2.5rem; height:2.5rem;" role="status"></div>
                             <p id="loading-msg" class="text-white mb-1 fw-semibold">Menyiapkan sesi pembayaran...</p>
-                            <p id="loading-sub" class="text-muted small mb-0">Menghubungi server Midtrans</p>
+                            <p id="loading-sub" class="text-white small mb-0">Menghubungi server Midtrans</p>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
                         <img src="<?= htmlspecialchars($field['gambar']) ?>" style="width: 110px; height: 70px; object-fit: cover; border-radius: var(--radius-sm);" alt="<?= htmlspecialchars($field['nama_lapangan']) ?>">
                         <div>
                             <h6 class="text-white mb-1 fw-bold"><?= htmlspecialchars($field['nama_lapangan']) ?></h6>
-                            <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot me-1"></i> <?= htmlspecialchars($field['lokasi']) ?></p>
+                            <p class="text-white small mb-0"><i class="fa-solid fa-location-dot me-1"></i> <?= htmlspecialchars($field['lokasi']) ?></p>
                             <span class="badge bg-secondary mt-1" style="font-size: 0.7rem;"><?= $tipe_label ?></span>
                         </div>
                     </div>
@@ -191,11 +191,11 @@ if (stripos($field['nama_lapangan'], 'turf') !== false) {
 
                     <!-- Price breakdown -->
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Sewa Lapangan (<?= $num_hours ?> jam)</span>
+                        <span class="text-white">Sewa Lapangan (<?= $num_hours ?> jam)</span>
                         <span class="text-white">Rp <?= number_format($subtotal, 0, ',', '.') ?></span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Biaya Administrasi/Layanan</span>
+                        <span class="text-white">Biaya Administrasi/Layanan</span>
                         <span class="text-white">Rp <?= number_format($service_fee, 0, ',', '.') ?></span>
                     </div>
                     
