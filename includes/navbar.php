@@ -7,7 +7,7 @@ function isActive($pageName) {
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
     <div class="container">
         <!-- Logo -->
-        <a class="navbar-brand text-white d-flex align-items-center" href="index.php?page=home">
+        <a class="navbar-brand text-white d-flex align-items-center" href="/">
             <span style="color: var(--accent-color); margin-right: 5px;"><i class="fa-solid fa-circle-nodes"></i></span>
             FUTSAL<span style="color: var(--accent-color);">HUB</span>
         </a>
@@ -21,18 +21,18 @@ function isActive($pageName) {
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <li class="nav-item">
-                    <a class="nav-link <?= isActive('home') ?>" href="index.php?page=home"><i class="fa-solid fa-house me-1"></i> Home</a>
+                    <a class="nav-link <?= isActive('home') ?>" href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?= isActive('lapangan') || isActive('detail_lapangan') ?>" href="index.php?page=lapangan"><i class="fa-solid fa-futbol me-1"></i> Lapangan</a>
+                    <a class="nav-link <?= isActive('lapangan') || isActive('detail_lapangan') ?>" href="/lapangan"><i class="fa-solid fa-futbol me-1"></i> Lapangan</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?= isActive('about') ?>" href="index.php?page=about"><i class="fa-solid fa-circle-info me-1"></i> Tentang Kami</a>
+                    <a class="nav-link <?= isActive('about') ?>" href="/about"><i class="fa-solid fa-circle-info me-1"></i> Tentang Kami</a>
                 </li>
                 <?php /* Link Kontak dipindah ke Footer sesuai permintaan redesain UX */ ?>
                 <?php if (isset($_SESSION['user'])): ?>
                     <li class="nav-item">
-                        <a class="nav-link <?= isActive('riwayat') ?>" href="index.php?page=riwayat"><i class="fa-solid fa-clock-rotate-left me-1"></i> Riwayat Booking</a>
+                        <a class="nav-link <?= isActive('riwayat') ?>" href="/riwayat"><i class="fa-solid fa-clock-rotate-left me-1"></i> Riwayat Booking</a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -50,15 +50,15 @@ function isActive($pageName) {
                         </button>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-2" aria-labelledby="userDropdown" style="background-color: var(--card-dark); border: 1px solid var(--border-dark);">
                             <?php if ($_SESSION['user']['role'] === 'admin'): ?>
-                                <li><a class="dropdown-item py-2" href="index.php?page=admin_dashboard"><i class="fa-solid fa-chart-line me-2"></i> Admin Dashboard</a></li>
+                                <li><a class="dropdown-item py-2" href="/admin_dashboard"><i class="fa-solid fa-chart-line me-2"></i> Admin Dashboard</a></li>
                             <?php endif; ?>
-                            <li><a class="dropdown-item py-2 text-danger" href="index.php?action=logout"><i class="fa-solid fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="/?action=logout"><i class="fa-solid fa-sign-out-alt me-2"></i> Logout</a></li>
                         </ul>
                     </div>
                 <?php else: ?>
                     <!-- Guest View -->
-                    <a href="index.php?page=login" class="btn btn-outline-custom px-3 py-2">Masuk</a>
-                    <a href="index.php?page=register" class="btn btn-primary-custom px-3 py-2">Daftar</a>
+                    <a href="/login" class="btn btn-outline-custom px-3 py-2">Masuk</a>
+                    <a href="/register" class="btn btn-primary-custom px-3 py-2">Daftar</a>
                 <?php endif; ?>
                 
             </div>

@@ -67,7 +67,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'mock_admin_login') {
     header("Location: index.php?page=admin_dashboard");
     exit;
 }
-$page = isset($_GET['page']) ? $_GET['page'] : 'home';
+$uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+$page = $uri === '' ? 'home' : $uri;
 
 //tentukan halaman yang bisa diakses oleh user dan admin
 $user_pages = ['home', 'about', 'contact', 'lapangan', 'detail_lapangan', 'booking', 'login', 'register', 'riwayat'];
