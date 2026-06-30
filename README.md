@@ -333,4 +333,3 @@ Proyek ini dikembangkan untuk keperluan akademik - Tugas UAS Mata Kuliah Pemrogr
 
 ## Kontributor
 
-- **PanjiBN** - Full-Stack Developer
